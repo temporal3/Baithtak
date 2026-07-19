@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="evening">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>baithak — a literary salon, kept since 2006</title>
+<meta name="description" content="The complete literary baithak of temporal, Toronto — haiku, ghazals, prose poems and verse — kept since 2006. Loaded live from the blog itself.">
+<meta property="og:title" content="baithak">
+<meta property="og:description" content="Haiku, ghazals, prose poems and verse — a literary salon kept since 2006.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Spectral:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ember:#e0935a; --ember-soft:#c9824e; --gold:#c9a465; --mazarine:#6f8fd6;
+    --font-display:"Fraunces",Georgia,serif; --font-poem:"Spectral",Georgia,serif; --font-ui:"Inter",system-ui,sans-serif;
+    --maxw:1160px; --radius:14px; --ease:cubic-bezier(.2,.7,.2,1);
+  }
+  [data-theme="evening"]{
+    --bg:#1a1310; --bg-deep:#120c09; --surface:#241a14; --surface-2:#2c211a;
+    --line:#3a2c22; --line-soft:#2f231b; --ink:#ece1d0; --ink-soft:#c7b6a1; --ink-mute:#9a8470;
+    --glow:rgba(224,147,90,.16); --card-shadow:0 1px 0 rgba(255,255,255,.02), 0 18px 40px -24px rgba(0,0,0,.8); --cover-base:#241a14;
+  }
+  [data-theme="daylight"]{
+    --bg:#efe6d5; --bg-deep:#e7dcc7; --surface:#f7f0e2; --surface-2:#fbf6ec;
+    --line:#d8c9ad; --line-soft:#e2d6bf; --ink:#2a1f17; --ink-soft:#5b4a3a; --ink-mute:#8a7560;
+    --ember:#b66a30; --ember-soft:#a85f2a; --gold:#9c7a36; --mazarine:#34518f;
+    --glow:rgba(182,106,48,.14); --card-shadow:0 1px 0 rgba(255,255,255,.5), 0 16px 34px -26px rgba(70,45,20,.5); --cover-base:#e7dcc7;
+  }
+  *,*::before,*::after{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%; scroll-behavior:smooth;}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto;}}
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:var(--font-ui); line-height:1.6;
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+    transition:background .5s var(--ease), color .5s var(--ease); overflow-x:hidden;}
+  body::before{content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
+    background:radial-gradient(820px 520px at 50% -8%, var(--glow), transparent 70%),
+               radial-gradient(620px 520px at 100% 0%, var(--glow), transparent 75%);}
+  a{color:inherit;}
+  ::selection{background:var(--ember); color:var(--bg-deep);}
+  :focus-visible{outline:2px solid var(--ember); outline-offset:3px; border-radius:4px;}
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 24px;}
+
+  .topbar{position:sticky; top:0; z-index:30; backdrop-filter:blur(10px);
+    background:color-mix(in srgb, var(--bg) 82%, transparent); border-bottom:1px solid var(--line-soft);}
+  .topbar__inner{display:flex; align-items:center; justify-content:space-between; gap:16px; height:60px;
+    max-width:var(--maxw); margin:0 auto; padding:0 24px;}
+  .brand{font-family:var(--font-display); font-weight:600; font-size:1.28rem; text-decoration:none;
+    color:var(--ink); display:inline-flex; align-items:center; gap:.55rem;}
+  .brand .ember-dot{width:.42rem; height:.42rem; border-radius:50%; background:var(--ember); box-shadow:0 0 12px 1px var(--ember);}
+  .controls{display:flex; align-items:center; gap:8px;}
+  .iconbtn{appearance:none; border:1px solid var(--line); background:var(--surface); color:var(--ink-soft);
+    height:38px; width:38px; border-radius:10px; display:grid; place-items:center; cursor:pointer;
+    transition:border-color .2s var(--ease), color .2s var(--ease);}
+  .iconbtn:hover{color:var(--ember); border-color:var(--ember-soft);}
+  .iconbtn svg{width:18px; height:18px; display:block;}
+  .theme-icon-day{display:none;}
+  [data-theme="daylight"] .theme-icon-night{display:none;}
+  [data-theme="daylight"] .theme-icon-day{display:block;}
+
+  .hero{position:relative; z-index:1; padding:90px 0 34px; text-align:center;}
+  .hero__name{font-family:var(--font-display); font-optical-sizing:auto; font-weight:500;
+    font-size:clamp(4rem,16vw,10.5rem); line-height:.9; letter-spacing:-.02em; margin:0;
+    background:linear-gradient(180deg, var(--ink), color-mix(in srgb, var(--ember) 55%, var(--ink)));
+    -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;}
+  .hero__aura{font-family:var(--font-poem); font-style:italic; font-size:clamp(1.15rem,2.4vw,1.5rem); color:var(--ink-soft); margin:1.1rem 0 0;}
+  .hero__room{max-width:40ch; margin:.7rem auto 0; color:var(--ink-mute); font-size:.98rem; line-height:1.7;}
+  .hero__room em{color:var(--ember); font-style:italic;}
+  .hero__practice{margin-top:2rem; font-family:var(--font-ui); font-size:.74rem; font-weight:500;
+    letter-spacing:.2em; text-transform:uppercase; color:var(--ink-mute); display:inline-flex;
+    align-items:center; gap:.8rem; flex-wrap:wrap; justify-content:center;}
+  .hero__practice::before,.hero__practice::after{content:""; width:28px; height:1px; background:var(--line);}
+
+  .toolbar{position:relative; z-index:1; margin:26px 0 8px; display:flex; flex-wrap:wrap; align-items:center; gap:14px;}
+  .search{position:relative; flex:1 1 260px; min-width:0;}
+  .search>svg{position:absolute; left:14px; top:50%; transform:translateY(-50%); width:17px; height:17px; color:var(--ink-mute); pointer-events:none;}
+  .search input{width:100%; height:46px; padding:0 40px 0 42px; border:1px solid var(--line); border-radius:12px;
+    background:var(--surface); color:var(--ink); font-family:var(--font-ui); font-size:.95rem;
+    transition:border-color .2s var(--ease), background .2s var(--ease);}
+  .search input::placeholder{color:var(--ink-mute);}
+  .search input:focus{outline:none; border-color:var(--ember-soft); background:var(--surface-2);}
+  .search__clear{position:absolute; right:8px; top:50%; transform:translateY(-50%); border:0; background:transparent;
+    color:var(--ink-mute); cursor:pointer; height:30px; width:30px; border-radius:8px; display:none; align-items:center; justify-content:center;}
+  .search__clear.is-on{display:flex;}
+  .search__clear:hover{color:var(--ember);}
+  .sort{display:inline-flex; border:1px solid var(--line); border-radius:12px; background:var(--surface); padding:4px; gap:2px;}
+  .sort button{appearance:none; border:0; background:transparent; font-family:var(--font-ui); font-size:.82rem; font-weight:500;
+    color:var(--ink-mute); padding:7px 13px; border-radius:9px; cursor:pointer; transition:color .2s var(--ease), background .2s var(--ease);}
+  .sort button[aria-pressed="true"]{background:var(--surface-2); color:var(--ember);}
+  .count{font-family:var(--font-ui); font-size:.82rem; color:var(--ink-mute); white-space:nowrap; margin-left:auto;}
+  .count b{color:var(--ink-soft); font-weight:600;}
+  .status{font-family:var(--font-ui); font-size:.78rem; color:var(--ember-soft); white-space:nowrap; display:inline-flex; align-items:center; gap:7px;}
+  .status::before{content:""; width:8px; height:8px; border-radius:50%; background:var(--ember);
+    box-shadow:0 0 8px var(--ember); animation:pulse 1.2s var(--ease) infinite;}
+  .status:empty{display:none;}
+  @keyframes pulse{0%,100%{opacity:.35;} 50%{opacity:1;}}
+  @media (prefers-reduced-motion:reduce){.status::before{animation:none;}}
+
+  .filters{position:relative; z-index:1; display:flex; flex-wrap:wrap; gap:8px; margin:8px 0 24px;}
+  .chip{appearance:none; cursor:pointer; font-family:var(--font-ui); font-size:.82rem; font-weight:500; color:var(--ink-soft);
+    background:var(--surface); border:1px solid var(--line); border-radius:999px; padding:7px 14px;
+    transition:color .2s var(--ease), border-color .2s var(--ease), background .2s var(--ease);}
+  .chip:hover{border-color:var(--ember-soft); color:var(--ember);}
+  .chip[aria-pressed="true"]{background:color-mix(in srgb, var(--ember) 16%, var(--surface)); border-color:var(--ember-soft); color:var(--ember);}
+  .chip .n{opacity:.6; margin-left:6px; font-variant-numeric:tabular-nums;}
+
+  .grid{position:relative; z-index:1; display:grid; gap:20px; grid-template-columns:repeat(auto-fill, minmax(300px,1fr)); padding-bottom:28px;}
+  .post{position:relative; text-align:left; border:1px solid var(--line); border-radius:var(--radius);
+    background:linear-gradient(180deg, var(--surface-2), var(--surface)); cursor:pointer; display:flex; flex-direction:column;
+    overflow:hidden; padding:0; font:inherit; color:inherit; width:100%; box-shadow:var(--card-shadow);
+    transition:transform .35s var(--ease), border-color .35s var(--ease), box-shadow .35s var(--ease);}
+  .post:hover,.post:focus-visible{transform:translateY(-4px); border-color:var(--ember-soft);
+    box-shadow:0 1px 0 rgba(255,255,255,.03), 0 26px 50px -24px rgba(0,0,0,.85);}
+  .cover{position:relative; aspect-ratio:16/9; overflow:hidden; background:var(--cover-base);}
+  .cover__art{position:absolute; inset:0;}
+  .cover__art svg{position:absolute; inset:0; width:100%; height:100%; display:block; transition:transform .6s var(--ease);}
+  .cover__photo{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; transition:transform .6s var(--ease), opacity .6s var(--ease);}
+  .post:hover .cover__photo,.post:hover .cover__art svg{transform:scale(1.05);}
+  .cover::after{content:""; position:absolute; inset:0; pointer-events:none;
+    background:linear-gradient(0deg, color-mix(in srgb, var(--bg-deep) 30%, transparent), transparent 55%);}
+  .badge{position:absolute; left:12px; bottom:12px; z-index:2; font-family:var(--font-ui); font-size:.68rem; font-weight:600;
+    letter-spacing:.14em; text-transform:uppercase; color:#fff;
+    background:rgba(0,0,0,.4); backdrop-filter:blur(6px); border:1px solid rgba(255,255,255,.22); padding:4px 10px; border-radius:999px;}
+  .badge--year{left:auto; right:12px; background:rgba(0,0,0,.32); letter-spacing:.1em;}
+
+  .post__body{padding:18px 20px 16px; display:flex; flex-direction:column; gap:13px; flex:1;}
+  .threads{display:flex; flex-wrap:wrap; gap:7px;}
+  .thread{font-family:var(--font-ui); font-size:.73rem; font-weight:500; color:var(--ink-soft); border:1px solid var(--line);
+    background:color-mix(in srgb, var(--ember) 8%, transparent); padding:3px 9px; border-radius:999px; white-space:nowrap;}
+  .haiku{font-family:var(--font-poem); font-weight:400; font-size:1.22rem; line-height:1.5; color:var(--ink); margin:0; white-space:pre-line; letter-spacing:.005em;}
+  .post__title{font-family:var(--font-display); font-weight:500; font-size:1.3rem; line-height:1.2; color:var(--ink); margin:0;}
+  .excerpt{font-family:var(--font-poem); font-size:1.02rem; line-height:1.55; color:var(--ink-soft); margin:0; white-space:pre-line;}
+  mark.hit{background:color-mix(in srgb, var(--ember) 42%, transparent); color:var(--ink); border-radius:3px; padding:0 .12em;}
+  .post__meta{margin-top:auto; display:flex; align-items:center; justify-content:space-between; gap:10px;
+    font-family:var(--font-ui); font-size:.78rem; color:var(--ink-mute); padding-top:12px; border-top:1px solid var(--line-soft);}
+  .post__read{color:var(--ember-soft); font-weight:500; display:inline-flex; align-items:center; gap:5px; opacity:0;
+    transform:translateX(-4px); transition:opacity .3s var(--ease), transform .3s var(--ease);}
+  .post:hover .post__read,.post:focus-visible .post__read{opacity:1; transform:none;}
+  @keyframes rise{from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:none;}}
+  .post.anim{animation:rise .5s var(--ease) both;}
+  @media (prefers-reduced-motion:reduce){.post.anim{animation:none;}}
+
+  .more{position:relative; z-index:1; display:grid; place-items:center; padding:8px 0 60px;}
+  .more button{background:var(--surface); border:1px solid var(--line); color:var(--ink-soft); font-family:var(--font-ui);
+    font-size:.88rem; font-weight:500; padding:11px 22px; border-radius:11px; cursor:pointer;}
+  .more button:hover{border-color:var(--ember-soft); color:var(--ember);}
+  #sentinel{height:1px;}
+
+  .empty{grid-column:1/-1; text-align:center; padding:70px 20px; color:var(--ink-mute);}
+  .empty b{color:var(--ink-soft);}
+  .empty button{margin-top:14px; background:transparent; border:1px solid var(--line); color:var(--ember);
+    font-family:var(--font-ui); font-size:.85rem; padding:8px 16px; border-radius:10px; cursor:pointer;}
+  .skeleton{border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; background:var(--surface);}
+  .skeleton .sk-cover{aspect-ratio:16/9; background:linear-gradient(100deg, var(--surface) 40%, var(--surface-2) 50%, var(--surface) 60%);
+    background-size:200% 100%; animation:shimmer 1.4s infinite;}
+  .skeleton .sk-line{height:12px; margin:14px 20px; border-radius:6px; background:var(--surface-2);}
+  @keyframes shimmer{to{background-position:-200% 0;}}
+  @media (prefers-reduced-motion:reduce){.skeleton .sk-cover{animation:none;}}
+
+  .reader{position:fixed; inset:0; z-index:50; display:none; place-items:center; padding:24px;}
+  .reader.is-open{display:grid;}
+  .reader__scrim{position:absolute; inset:0; background:color-mix(in srgb, var(--bg-deep) 80%, transparent); backdrop-filter:blur(6px); animation:fade .3s var(--ease) both;}
+  @keyframes fade{from{opacity:0;} to{opacity:1;}}
+  .reader__panel{position:relative; z-index:1; width:min(640px,100%); max-height:calc(100vh - 48px); overflow:auto;
+    border:1px solid var(--line); border-radius:20px; background:linear-gradient(180deg, var(--surface-2), var(--surface));
+    box-shadow:0 40px 90px -30px rgba(0,0,0,.8); animation:pop .4s var(--ease) both;}
+  @keyframes pop{from{opacity:0; transform:translateY(16px) scale(.985);} to{opacity:1; transform:none;}}
+  @media (prefers-reduced-motion:reduce){.reader__scrim,.reader__panel{animation:none;}}
+  .reader__cover{position:relative; aspect-ratio:21/9; overflow:hidden; background:var(--cover-base);}
+  .reader__cover .cover__art svg,.reader__cover .cover__photo{position:absolute; inset:0; width:100%; height:100%; display:block; object-fit:cover;}
+  .reader__cover::after{content:""; position:absolute; inset:0;
+    background:linear-gradient(0deg, color-mix(in srgb, var(--surface) 88%, transparent), transparent 72%);}
+  .reader__close{position:absolute; top:12px; right:12px; z-index:3; border:1px solid rgba(255,255,255,.25);
+    background:rgba(0,0,0,.38); backdrop-filter:blur(6px); color:#fff; width:36px; height:36px; border-radius:10px;
+    cursor:pointer; display:grid; place-items:center;}
+  .reader__close:hover{color:var(--ember);}
+  .reader__inner{padding:24px clamp(22px,5vw,46px) 26px; text-align:center;}
+  .reader__eyebrow{font-family:var(--font-ui); font-size:.74rem; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-mute);
+    margin:0 0 20px; display:flex; gap:10px; align-items:center; justify-content:center; flex-wrap:wrap;}
+  .reader__eyebrow .sep{width:4px; height:4px; border-radius:50%; background:var(--ember);}
+  .weave{display:flex; flex-direction:column; gap:6px; max-width:340px; margin:0 auto 24px;}
+  .weave__row{display:flex; align-items:baseline; justify-content:space-between; gap:12px; font-family:var(--font-ui);
+    font-size:.8rem; padding:6px 2px; border-bottom:1px dotted var(--line);}
+  .weave__row:last-child{border-bottom:0;}
+  .weave__src{color:var(--ink-mute); letter-spacing:.02em;}
+  .weave__word{color:var(--ember); font-weight:600; font-size:.92rem;}
+  .reader__haiku{font-family:var(--font-poem); font-weight:300; font-size:clamp(1.5rem,4.4vw,2.05rem); line-height:1.6;
+    color:var(--ink); margin:0 0 26px; white-space:pre-line; letter-spacing:.01em;}
+  .reader__title{font-family:var(--font-display); font-weight:500; font-size:clamp(1.7rem,4.6vw,2.3rem); line-height:1.15; color:var(--ink); margin:0 0 22px;}
+  .reader__prose{font-family:var(--font-poem); font-weight:400; font-size:clamp(1.05rem,2.6vw,1.2rem); line-height:1.85;
+    color:var(--ink); margin:0 auto 18px; white-space:pre-line; max-width:44ch; text-align:left;}
+  .reader__prose.is-centered{text-align:center;}
+  .reader__note{font-family:var(--font-poem); font-style:italic; font-size:.92rem; color:var(--ink-mute); margin:0 0 26px;}
+  .reader__nav{display:flex; align-items:center; justify-content:space-between; gap:12px; border-top:1px solid var(--line-soft); padding-top:18px;}
+  .reader__navbtn{appearance:none; border:1px solid var(--line); background:var(--surface); color:var(--ink-soft);
+    font-family:var(--font-ui); font-size:.82rem; font-weight:500; padding:9px 14px; border-radius:10px; cursor:pointer;
+    display:inline-flex; align-items:center; gap:7px; transition:color .2s var(--ease), border-color .2s var(--ease);}
+  .reader__navbtn:hover:not(:disabled){color:var(--ember); border-color:var(--ember-soft);}
+  .reader__navbtn:disabled{opacity:.35; cursor:default;}
+  .reader__origin{font-family:var(--font-ui); font-size:.76rem; color:var(--ink-mute); text-decoration:none; border-bottom:1px solid transparent;}
+  .reader__origin:hover{color:var(--ember); border-bottom-color:var(--ember-soft);}
+
+  .footer{position:relative; z-index:1; border-top:1px solid var(--line-soft); background:var(--bg-deep); padding:52px 0 60px;}
+  .footer__grid{display:grid; gap:30px; grid-template-columns:1.4fr 1fr;}
+  .footer h2{font-family:var(--font-display); font-weight:500; font-size:1.5rem; margin:0 0 10px;}
+  .footer p{color:var(--ink-mute); margin:0 0 8px; max-width:48ch; font-size:.95rem;}
+  .footer__links{display:flex; flex-direction:column; gap:4px;}
+  .footer__links h3{font-family:var(--font-ui); font-size:.74rem; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-mute); margin:0 0 10px;}
+  .footer__links a{color:var(--ink-soft); text-decoration:none; font-size:.95rem; display:inline-flex; align-items:center; gap:7px;
+    padding:3px 0; width:fit-content; border-bottom:1px solid transparent; transition:color .2s var(--ease), border-color .2s var(--ease);}
+  .footer__links a:hover{color:var(--ember); border-bottom-color:var(--ember-soft);}
+  .footer__links a svg{width:14px; height:14px; opacity:.6;}
+  .colophon{margin-top:40px; padding-top:20px; border-top:1px solid var(--line-soft); font-family:var(--font-ui); font-size:.78rem;
+    color:var(--ink-mute); display:flex; flex-wrap:wrap; gap:6px 16px; justify-content:space-between;}
+  @media (max-width:620px){.footer__grid{grid-template-columns:1fr;} .hero{padding-top:68px;} .count{margin-left:0;}}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar__inner">
+    <a class="brand" href="#top">baithak<span class="ember-dot" aria-hidden="true"></span></a>
+    <div class="controls">
+      <button class="iconbtn" id="searchJump" aria-label="Jump to search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      </button>
+      <button class="iconbtn" id="themeToggle" aria-label="Switch between evening and daylight">
+        <svg class="theme-icon-night" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+        <svg class="theme-icon-day" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+  <div class="wrap">
+    <section class="hero">
+      <h1 class="hero__name">baithak</h1>
+      <p class="hero__aura">baithak has an aura.</p>
+      <p class="hero__room">sheesha, fireplace, bulging bookshelves, rugs, divan <em>takias</em> &mdash; and more.</p>
+      <p class="hero__practice">haiku &middot; ghazals &middot; prose &middot; verse &mdash; kept since 2006</p>
+    </section>
+
+    <div class="toolbar">
+      <div class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input id="search" type="search" placeholder="Search a word, a line, a title…" autocomplete="off" aria-label="Search the baithak">
+        <button class="search__clear" id="searchClear" aria-label="Clear search">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="sort" role="group" aria-label="Sort order">
+        <button id="sortNew" aria-pressed="true">Newest</button>
+        <button id="sortOld" aria-pressed="false">Oldest</button>
+      </div>
+      <span class="status" id="status" aria-live="polite"></span>
+      <p class="count" id="count" aria-live="polite"></p>
+    </div>
+
+    <div class="filters" id="filters" role="group" aria-label="Filter by form"></div>
+    <section class="grid" id="grid" aria-label="Writing"></section>
+    <div class="more"><div id="sentinel"></div><button id="loadMore" hidden>Show more</button></div>
+  </div>
+
+  <footer class="footer">
+    <div class="wrap">
+      <div class="footer__grid">
+        <div>
+          <h2>About the baithak</h2>
+          <p>A baithak is a room you are invited to sit in &mdash; for music, for talk, for poetry. This one belongs to <strong>temporal</strong>, writing from Toronto since 2006: daily haiku and senryu, transliterated Urdu ghazals, narrative prose poems, and the occasional political verse or &ldquo;poessay.&rdquo;</p>
+          <p>Every piece here is drawn live from the blog itself, so the room is always complete and always current.</p>
+        </div>
+        <div class="footer__links">
+          <h3>Elsewhere</h3>
+          <a href="https://baithak.blogspot.com/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 17 17 7M8 7h9v9"/></svg>Original blog (Blogspot)</a>
+          <a href="https://baithuk.wordpress.com/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 17 17 7M8 7h9v9"/></svg>baithuk on WordPress</a>
+          <a href="https://www.blogger.com/profile/18142207234611472045" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>temporal &mdash; profile</a>
+        </div>
+      </div>
+      <div class="colophon"><span>baithak &mdash; a literary salon, Toronto.</span><span id="colophonCount"></span></div>
+    </div>
+  </footer>
+</main>
+
+<div class="reader" id="reader" role="dialog" aria-modal="true" aria-label="Reader" aria-hidden="true">
+  <div class="reader__scrim" data-close></div>
+  <div class="reader__panel" role="document">
+    <button class="reader__close" data-close aria-label="Close (Esc)">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <div class="reader__cover" id="rCover"></div>
+    <div class="reader__inner">
+      <p class="reader__eyebrow" id="rEyebrow"></p>
+      <div id="rContent"></div>
+      <div class="reader__nav">
+        <button class="reader__navbtn" id="rPrev"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>Newer</button>
+        <a class="reader__origin" id="rOrigin" target="_blank" rel="noopener">view original</a>
+        <button class="reader__navbtn" id="rNext">Older<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   baithak
+   The site loads the ENTIRE blog from its own Atom/JSON feed at
+   runtime (no curation, no manual list). The pieces below are an
+   embedded fallback so the page is never empty — offline, or while
+   the feed is still loading. Each cover is generated from the
+   piece's own words: its imagery picks the motif and palette.
+   ============================================================ */
+const BLOG = "baithak.blogspot.com";   // change this to point at another Blogger blog
+const PAGE = 150;                       // posts per feed request
+const BATCH = 60;                       // cards rendered per scroll batch
+
+const HAIKU_SOURCES = ["#haikuchallenge","#BraveWrite","#haikufeels"];
+const FORM_LABEL = { haiku:"haiku", ghazal:"ghazal", prose:"prose poem", verse:"verse" };
+
+/* ---- embedded set: the full recent run (verbatim) + older varied work.
+   the live loader replaces this with the entire archive in a browser;
+   offline / in preview, this is what shows. ---- */
+const B="https://baithak.blogspot.com/";
+const FALLBACK = [
+  {date:"2026-04-02",type:"haiku",words:["heartstrings","mazarine","eject"],lines:["cassette ejected","but the music kept playing","mazarine heartstrings"],url:B+"2026/04/heartstrings-mazarine-eject-apr-02.html"},
+  {date:"2026-04-01",type:"haiku",words:["harmony","halcyon","fail"],lines:["half hearted steps fail","halcyon harmony wins","not once but always"],url:B+"2026/04/harmony-halcyon-fail-apr-01.html"},
+  {date:"2026-03-31",type:"haiku",words:["hallmark","opalescent","start"],lines:["start but do not stop","pearls opalescent hallmark","ushers in calmness"],url:B+"2026/03/hallmark-opalescent-start-mar-31.html"},
+  {date:"2026-03-30",type:"haiku",words:["glow","hummingbird","zero"],lines:["with zero worry","seemingly hummingbird glows","ushers in fondness"],url:B+"2026/03/glow-hummingbird-zero-mar-30.html"},
+  {date:"2026-03-29",type:"haiku",words:["glimmer","solemn","yield"],lines:["solemn glimmer yields","serenity by the lake","cascading music"],url:B+"2026/03/glimmer-solemn-yield-mar-29.html"},
+  {date:"2026-03-28",type:"haiku",words:["garden","orphic","wire"],lines:["cool in the garden","nusrat fatehali khan","wired orphic music"],url:B+"2026/03/garden-orphic-wire-mar-28.html"},
+  {date:"2026-03-27",type:"haiku",words:["fervor","globe trotter","whistle"],lines:["whistling on the trail","with his globe-trotter fervor","he surprised them all"],url:B+"2026/03/fervor-globe-trotter-whistle-mar-27.html"},
+  {date:"2026-03-26",type:"haiku",words:["feature","irenic","breathe"],lines:["breathe in irenic","make it a lasting feature","breathe out violence"],url:B+"2026/03/feature-irenic-breathe-mar-26.html"},
+  {date:"2026-03-25",type:"haiku",words:["fawn","piccolo","coast"],lines:["picnic by the coast","fawning over piccolo","ignoring war clouds"],url:B+"2026/03/fawn-piccolo-coast-mar-25.html"},
+  {date:"2026-03-24",type:"haiku",words:["echo","citreous","appeal"],lines:["to cease and desist","crimson and citreous flames","echoes of appeals"],url:B+"2026/03/echo-citreous-appeal-mar-24.html"},
+  {date:"2026-03-23",type:"haiku",words:["east","windsock","direct"],lines:["windsock direction","indicates winds from the east","a new world order"],url:B+"2026/03/east-windsock-direct-mar-23.html"},
+  {date:"2026-03-22",type:"haiku",words:["earth","training wheels","rush"],lines:["flight simulators","training wheels for beyond earth","adrenaline rush"],url:B+"2026/03/earth-training-wheels-rush-mar-22.html"},
+  {date:"2026-03-21",type:"haiku",words:["daisy","tin can","loop"],lines:["white, yellow and pink","loop of daisies in tin can","eccentric concept"],url:B+"2026/03/daisy-tin-can-loop-mar-21.html"},
+  {date:"2026-03-20",type:"haiku",words:["dahlia","rapidity","erase"],lines:["dahlia blooms erase","with rapidity, cold blues","heralds peace and love"],url:B+"2026/03/dahlia-rapidity-erase-mar-20.html"},
+  {date:"2026-03-19",type:"haiku",words:["daffodil","cherry blossom","rule"],lines:["come spring daffodils","followed by cherry blossom","lastly tulips rule"],url:B+"2026/03/daffodil-cherry-blossom-rule-mar-19.html"},
+  {date:"2026-03-18",type:"haiku",words:["console","tousle","peel"],lines:["when peeling onion","console tousled appearances","tears are good for ducts"],url:B+"2026/03/console-tousle-peel-mar-18.html"},
+  {date:"2026-03-17",type:"haiku",words:["comfort","coma","pave"],lines:["pave plan for comfort","coma can be short or long","hope is eternal"],url:B+"2026/03/comfort-coma-pave-mar-17.html"},
+  {date:"2026-03-16",type:"haiku",words:["cherry","brick wall","joke"],lines:["cherry picking jokes","to crack cultural brick wall","catching frowns and smiles"],url:B+"2026/03/cherry-brick-wall-joke-mar-16.html"},
+  {date:"2026-03-15",type:"haiku",words:["banquet","plushie","endure"],lines:["plushies to be won","if boredom can be endured","certain banquet woes"],url:B+"2026/03/banquet-plushie-endure-mar-15.html"},
+  {date:"2026-03-14",type:"haiku",words:["bagpipe","coffee","filter"],lines:["sipping dark coffee","filtering bagpipe music","far, far from the war"],url:B+"2026/03/bagpipe-coffee-filter-mar-14.html"},
+  {date:"2026-03-13",type:"haiku",words:["bacchus","topiary","rely"],lines:["rely on bacchus","on panther topiary","revel and inspire"],url:B+"2026/03/bacchus-topiary-rely-mar-13.html"},
+  {date:"2026-03-12",type:"haiku",words:["aesthetic","converting","offer"],lines:["converting offer","to alter the aesthetics","dull and distasteful"],url:B+"2026/03/aesthetic-converting-offer-mar-12.html"},
+  {date:"2026-03-11",type:"haiku",words:["aegis","bellicose","change"],lines:["neath ego's aegis","change is under the radar","bellicosity"],url:B+"2026/03/aegis-bellicose-change-mar-11.html"},
+  {date:"2026-03-10",type:"haiku",words:["advent","chintzy","advance"],lines:["advent of world war","advance of chintzy blackmail","mad men in power"],url:B+"2026/03/advent-chintzy-advance-mar-10.html"},
+  {date:"2026-03-09",type:"haiku",words:["zoetic","motif","decode"],lines:["in the imposed war","adopt a zoetic motif","ghazi or shaheed"],url:B+"2026/03/zoetic-motif-decode-mar-09.html"},
+  {date:"2026-03-08",type:"haiku",words:["zephyr","gesture","adopt"],lines:["zephyr wind gestures","adopt equilibrium","success will descend"],url:B+"2026/03/zoetic-motif-adopt-mar-09.html"},
+  {date:"2026-03-07",type:"haiku",words:["zenith","allude","bank"],lines:["zenith or nadir","banks of River Time allude","the tidings ordained"],url:B+"2026/03/zenith-allude-bank-mar-07.html"},
+  {date:"2026-03-06",type:"haiku",words:["yours","foment","handle"],lines:["foment a crisis","handle with care and caution","yours for gain or loss"],url:B+"2026/03/yours-foment-handle-mar-06.html"},
+  {date:"2025-04-22",type:"haiku",words:["warbler","con","intend"],lines:["the marquee display","featured con warbler's image","intend to attract"],url:B+"2025/04/warbler-con-intend-apr-22.html"},
+  {date:"2023-06-01",type:"haiku",words:["zariba"],lines:["against viruses","cyber or bacterial","zariba flounders"],url:B+"2023/06/zariba.html"},
+  {date:"2023-03-30",type:"haiku",words:["emollient"],lines:["qawwali music","emollient, soothing","whirling dervishes"],url:"http://baithak.blogspot.com/2023/03/emollient.html"},
+  {date:"2018-01-17",type:"ghazal",title:"wujood",body:"beh'r e tazabzoob maiN\nhaiN youN ghota zun\nn'janay kis saharay kay mutlaashi haiN\nb'juz kay wujood se hum munharif haiN",note:"transliterated Urdu",centered:true,url:B+"2018/01/wujood.html"},
+  {date:"2010-10-23",type:"prose",title:"Bajan Claire Collins",body:"bajan claire collins, lithe\nsmiling eyes, pouted lips\nassured, single parent\nin T.O. by way of\nthe st. lawrence gap,\nisland of barbados\nmother of ashley\nnow six and my colleague\n\nashley was cuddly, cute\nwith a short afro and\ninfectious dimpled smile\neveryone loved him\n\nten years later\n\na dark wintry night returning late from work\nwalking towards home saw some dark shadows lurking\naround the corner variety store ahead\nbaggy pants, white joggers, over-sized tops with hoods\ninstinctively i crossed the street and kept walking\npast the store i heard foot steps approaching me\ni ran a mental checklist to ward off trouble\n\n'hello uncle t, how are you?' said ashley\nrelieved i inquired about him and claire",note:"names changed",url:"http://baithak.blogspot.com/2010/10/bajan-claire-collins.html"},
+];
+
+/* ============================================================ helpers */
+const $ = (s, c=document) => c.querySelector(s);
+const fmtLong  = new Intl.DateTimeFormat("en-US",{weekday:"long",month:"long",day:"numeric",year:"numeric"});
+const fmtShort = new Intl.DateTimeFormat("en-US",{month:"short",day:"numeric",year:"numeric"});
+const dateObj = iso => new Date(iso + "T12:00:00");
+const yearOf  = iso => (iso||"").slice(0,4);
+const esc = s => String(s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+function hash(str){let h=2166136261;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function highlight(text,q){const safe=esc(text);if(!q)return safe;const re=new RegExp("("+q.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+")","ig");return safe.replace(re,"<mark class='hit'>$1</mark>");}
+
+/* ============================================================ covers
+   imagery comes from the words: pick a theme by keyword, then draw a
+   unique composition seeded by the piece's title+date. */
+const THEMES = {
+  music:   {kw:["music","song","qawwali","melody","cassette","note","sound","sing","orphic","piccolo","bagpipe","whistle","harmony","rhythm","tune","sa re ga","raag","ghazal","sufi"], pal:["#2c1c44","#523a73"], ink:"#d7baff", motif:"arcs"},
+  dance:   {kw:["dance","dervish","whirl","spin","sway","twirl","ballet"], pal:["#3d1336","#6e2a5e"], ink:"#ffb3ea", motif:"whirl"},
+  war:     {kw:["war","violence","bomb","blackmail","crisis","fight","battle","blood","conflict","bellicose","ghazi","shaheed","muslimban","tyrant","order","detention","barbs"], pal:["#2a1212","#4a1f1c"], ink:"#e88a7a", motif:"shards"},
+  love:    {kw:["love","heart","heartstrings","fond","beloved","kiss","embrace","dear","yaar","tender","longing","ishq"], pal:["#42121f","#7a2536"], ink:"#ffb4bd", motif:"hearts"},
+  flora:   {kw:["flower","bloom","daisy","dahlia","daffodil","tulip","rose","petal","garden","blossom","cherry","lotus","jasmine","marigold","opalescent","pearl"], pal:["#4a1f33","#7c3a52"], ink:"#ffc2d6", motif:"petals"},
+  tree:    {kw:["tree","forest","leaf","branch","wood","topiary","vine","tendril","foliage","grove","bough","root"], pal:["#1f3322","#365a37"], ink:"#bfe6b8", motif:"foliage"},
+  bird:    {kw:["bird","warbler","hummingbird","wing","feather","sparrow","owl","crane","gull","fly","flight","nest","swallow"], pal:["#1d3a4d","#356b86"], ink:"#bfe3f0", motif:"birds"},
+  fire:    {kw:["fire","flame","ember","burn","spark","blaze","smoke","sheesha","candle","glow","molten","crimson","citreous","scorch"], pal:["#3a1505","#7c2f10"], ink:"#ffb061", motif:"flames"},
+  water:   {kw:["sea","ocean","lake","river","wave","tide","water","coast","shore","drown","stream","monsoon","flood","ghota","cascade","mazarine","aqua"], pal:["#16313d","#2b5d6e"], ink:"#8fd0d6", motif:"waves"},
+  rain:    {kw:["rain","drizzle","storm","petrichor","wet","downpour","cloudburst","shower"], pal:["#2a3340","#3f4d5e"], ink:"#aebfd0", motif:"drops"},
+  winter:  {kw:["snow","winter","frost","ice","cold","chill","blizzard","icicle","glacial"], pal:["#39505f","#5b7689"], ink:"#e6f1f6", motif:"drops"},
+  sun:     {kw:["sun","light","dawn","daylight","bright","gold","shine","halcyon","radiance","sunrise","noon"], pal:["#5a3514","#9c6a1f"], ink:"#ffd27a", motif:"rays"},
+  night:   {kw:["moon","night","dark","star","dusk","midnight","nadir","lunar","nocturne","sleep","dream","morpheus"], pal:["#1b1f3a","#2f3566"], ink:"#cdd2ff", motif:"crescent"},
+  mountain:{kw:["mountain","peak","zenith","hill","cliff","summit","everest","ridge","alps"], pal:["#2e2f38","#4a4d5e"], ink:"#c7ccd8", motif:"peaks"},
+  journey: {kw:["road","journey","path","travel","globe","trail","wander","voyage","train","walk","trotter","pilgrim","migrate"], pal:["#3a2e1c","#6b5532"], ink:"#f0d39a", motif:"path"},
+  city:    {kw:["city","street","building","urban","marquee","store","town","skyline","toronto","traffic","subway"], pal:["#222a33","#3c4a59"], ink:"#bcd0e0", motif:"skyline"},
+  word:    {kw:["word","book","poem","verse","write","alfaaz","decode","page","ink","letter","converse","story","haiku","read","print"], pal:["#322617","#574326"], ink:"#e8cfa0", motif:"textbars"},
+  drink:   {kw:["coffee","tea","chai","banquet","sip","cup","wine","bacchus","brew","espresso","feast"], pal:["#2e1d12","#54331f"], ink:"#e6b489", motif:"cup"},
+  time:    {kw:["time","clock","hour","yield","advent","eternal","zoetic","age","moment","decade","season","year"], pal:["#1f2d2e","#37514f"], ink:"#bfe0d8", motif:"rings"},
+  abstract:{kw:[], pal:["#262029","#443a4a"], ink:"#d8c7d8", motif:"rings"},
+};
+function pickTheme(text){
+  let best="abstract",n=-1;
+  for(const k in THEMES){let c=0;for(const w of THEMES[k].kw){if(text.indexOf(w)>=0)c++;}if(c>n&&c>0){n=c;best=k;}}
+  return best;
+}
+const MOTIF = {
+  waves:(r,W,H,ink)=>{let s="";for(let i=0;i<4;i++){const y=H*0.42+i*16+r()*8;let d=`M0 ${y}`;for(let x=0;x<=W;x+=24)d+=` Q ${x+12} ${y-12+r()*24} ${x+24} ${y}`;s+=`<path d="${d}" fill="none" stroke="${ink}" stroke-width="2" opacity="${(0.5-i*0.08).toFixed(2)}"/>`;}return s;},
+  drops:(r,W,H,ink)=>{let s="";for(let i=0;i<28;i++){const x=r()*W,y=r()*H,l=6+r()*10;s+=`<line x1="${x.toFixed(1)}" y1="${y.toFixed(1)}" x2="${(x-3).toFixed(1)}" y2="${(y+l).toFixed(1)}" stroke="${ink}" stroke-width="1.6" opacity="${(0.3+r()*0.4).toFixed(2)}"/>`;}return s;},
+  rays:(r,W,H,ink)=>{const cx=W*0.5,cy=H*0.42;let s=`<circle cx="${cx}" cy="${cy}" r="${(20+r()*8).toFixed(1)}" fill="${ink}" opacity="0.85"/>`;for(let i=0;i<14;i++){const a=i/14*Math.PI*2,r2=58+r()*30;s+=`<line x1="${(cx+Math.cos(a)*30).toFixed(1)}" y1="${(cy+Math.sin(a)*30).toFixed(1)}" x2="${(cx+Math.cos(a)*r2).toFixed(1)}" y2="${(cy+Math.sin(a)*r2).toFixed(1)}" stroke="${ink}" stroke-width="2" opacity="0.45"/>`;}return s;},
+  crescent:(r,W,H,ink)=>{const cx=W*0.68,cy=H*0.4;let s=`<circle cx="${cx}" cy="${cy}" r="26" fill="${ink}" opacity="0.9"/><circle cx="${cx+10}" cy="${cy-6}" r="22" fill="#00000055"/>`;for(let i=0;i<16;i++){s+=`<circle cx="${(r()*W).toFixed(1)}" cy="${(r()*H*0.85).toFixed(1)}" r="${(0.6+r()*1.6).toFixed(1)}" fill="${ink}" opacity="${(0.4+r()*0.5).toFixed(2)}"/>`;}return s;},
+  peaks:(r,W,H,ink)=>{const base=H*0.96;let p=[[0,base]];for(let x=0;x<=W;x+=W/5)p.push([x,base-(20+r()*72)]);p.push([W,base]);return `<polygon points="${p.map(q=>q[0].toFixed(0)+","+q[1].toFixed(0)).join(" ")}" fill="${ink}" opacity="0.5"/>`;},
+  petals:(r,W,H,ink)=>{let s="";const n=3+Math.floor(r()*3);for(let f=0;f<n;f++){const cx=40+r()*(W-80),cy=36+r()*(H-72);for(let i=0;i<6;i++){const a=i/6*Math.PI*2,px=cx+Math.cos(a)*10,py=cy+Math.sin(a)*10;s+=`<ellipse cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" rx="5" ry="11" transform="rotate(${(a*180/Math.PI).toFixed(0)} ${px.toFixed(1)} ${py.toFixed(1)})" fill="${ink}" opacity="0.5"/>`;}s+=`<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="5" fill="${ink}" opacity="0.85"/>`;}return s;},
+  foliage:(r,W,H,ink)=>{let s="";for(let i=0;i<5;i++){const x=20+r()*(W-40),h=40+r()*70;s+=`<line x1="${x.toFixed(1)}" y1="${H}" x2="${x.toFixed(1)}" y2="${(H-h).toFixed(1)}" stroke="${ink}" stroke-width="2" opacity="0.5"/>`;for(let j=0;j<4;j++){const ly=H-h*0.4-j*12,sd=j%2?1:-1;s+=`<ellipse cx="${(x+sd*8).toFixed(1)}" cy="${ly.toFixed(1)}" rx="9" ry="4" transform="rotate(${sd*30} ${(x+sd*8).toFixed(1)} ${ly.toFixed(1)})" fill="${ink}" opacity="0.45"/>`;}}return s;},
+  birds:(r,W,H,ink)=>{let s="";for(let i=0;i<9;i++){const x=r()*W,y=r()*H*0.7,w=8+r()*8;s+=`<path d="M ${(x-w).toFixed(1)} ${y.toFixed(1)} Q ${x.toFixed(1)} ${(y-w*0.7).toFixed(1)} ${x.toFixed(1)} ${y.toFixed(1)} Q ${x.toFixed(1)} ${(y-w*0.7).toFixed(1)} ${(x+w).toFixed(1)} ${y.toFixed(1)}" fill="none" stroke="${ink}" stroke-width="2" opacity="${(0.5+r()*0.4).toFixed(2)}"/>`;}return s;},
+  flames:(r,W,H,ink)=>{let s="";for(let i=0;i<20;i++){s+=`<circle cx="${(r()*W).toFixed(1)}" cy="${(H-r()*H*0.7).toFixed(1)}" r="${(2+r()*5).toFixed(1)}" fill="${ink}" opacity="${(0.3+r()*0.5).toFixed(2)}"/>`;}return s;},
+  arcs:(r,W,H,ink)=>{const cx=W*0.3,cy=H*0.62;let s="";for(let i=1;i<=5;i++){const rr=i*15;s+=`<path d="M ${cx} ${(cy-rr).toFixed(1)} A ${rr} ${rr} 0 0 1 ${(cx+rr).toFixed(1)} ${cy}" fill="none" stroke="${ink}" stroke-width="2" opacity="${(0.62-i*0.08).toFixed(2)}"/>`;}return s;},
+  whirl:(r,W,H,ink)=>{const cx=W/2,cy=H/2;let d=`M ${cx} ${cy}`;for(let a=0;a<Math.PI*6;a+=0.28){const rr=a*4;d+=` L ${(cx+Math.cos(a)*rr).toFixed(1)} ${(cy+Math.sin(a)*rr).toFixed(1)}`;}return `<path d="${d}" fill="none" stroke="${ink}" stroke-width="2" opacity="0.55"/>`;},
+  shards:(r,W,H,ink)=>{let s="";for(let i=0;i<8;i++){const x=r()*W,y=r()*H;s+=`<polygon points="${x.toFixed(0)},${y.toFixed(0)} ${(x+10+r()*22).toFixed(0)},${(y+5).toFixed(0)} ${(x+5).toFixed(0)},${(y+20+r()*22).toFixed(0)}" fill="${ink}" opacity="${(0.3+r()*0.4).toFixed(2)}"/>`;}return s;},
+  hearts:(r,W,H,ink)=>{let s="";const n=2+Math.floor(r()*3);for(let i=0;i<n;i++){const x=30+r()*(W-60),y=24+r()*(H-48),k=(0.6+r()*0.8).toFixed(2);s+=`<path transform="translate(${x.toFixed(1)},${y.toFixed(1)}) scale(${k})" d="M0 6 C -10 -6 -22 4 0 20 C 22 4 10 -6 0 6 Z" fill="${ink}" opacity="0.5"/>`;}return s;},
+  path:(r,W,H,ink)=>{let d=`M ${W*0.5} ${H}`,x=W*0.5;for(let y=H;y>0;y-=20){x+=(r()-0.5)*40;d+=` L ${x.toFixed(1)} ${y.toFixed(1)}`;}return `<line x1="0" y1="${(H*0.34).toFixed(1)}" x2="${W}" y2="${(H*0.34).toFixed(1)}" stroke="${ink}" stroke-width="1" opacity="0.3"/><path d="${d}" fill="none" stroke="${ink}" stroke-width="2.5" opacity="0.55" stroke-dasharray="2 7"/>`;},
+  skyline:(r,W,H,ink)=>{let s="",x=0;while(x<W){const w=14+r()*22,h=28+r()*92;s+=`<rect x="${x.toFixed(1)}" y="${(H-h).toFixed(1)}" width="${(w-3).toFixed(1)}" height="${h.toFixed(1)}" fill="${ink}" opacity="0.42"/>`;x+=w;}return s;},
+  textbars:(r,W,H,ink)=>{let s="";for(let i=0;i<7;i++){const y=22+i*20,w=W*(0.35+r()*0.55);s+=`<rect x="28" y="${y}" width="${w.toFixed(1)}" height="4" rx="2" fill="${ink}" opacity="0.4"/>`;}return s;},
+  cup:(r,W,H,ink)=>{const cx=W/2,cy=H*0.58;let s=`<rect x="${(cx-26).toFixed(1)}" y="${cy}" width="52" height="34" rx="6" fill="${ink}" opacity="0.55"/><path d="M ${(cx+26).toFixed(1)} ${(cy+6).toFixed(1)} q 14 4 0 22" fill="none" stroke="${ink}" stroke-width="3" opacity="0.55"/>`;for(let i=0;i<3;i++){s+=`<path d="M ${(cx-12+i*12).toFixed(1)} ${(cy-6).toFixed(1)} q 6 -8 0 -16" fill="none" stroke="${ink}" stroke-width="2" opacity="0.4"/>`;}return s;},
+  rings:(r,W,H,ink)=>{const cx=W*(0.4+r()*0.2),cy=H*(0.4+r()*0.2);let s="";for(let i=1;i<=5;i++){s+=`<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${i*14}" fill="none" stroke="${ink}" stroke-width="1.6" opacity="${(0.5-i*0.06).toFixed(2)}"/>`;}return s;},
+};
+function coverSVG(p){
+  const t=THEMES[p.theme]||THEMES.abstract;
+  const seed=hash((p.title||"")+(p.date||""));
+  const rng=mulberry32(seed||1);
+  const id="g"+seed.toString(36);
+  const W=320,H=180;
+  const motif=(MOTIF[t.motif]||MOTIF.rings)(rng,W,H,t.ink);
+  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice" role="img" aria-label="${esc(p.theme)} motif">
+    <defs><linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${t.pal[0]}"/><stop offset="1" stop-color="${t.pal[1]}"/></linearGradient>
+    <radialGradient id="${id}v" cx="50%" cy="28%" r="85%"><stop offset="0" stop-color="rgba(255,255,255,.10)"/><stop offset="1" stop-color="rgba(0,0,0,.30)"/></radialGradient></defs>
+    <rect width="${W}" height="${H}" fill="url(#${id})"/>${motif}<rect width="${W}" height="${H}" fill="url(#${id}v)"/></svg>`;
+}
+/* a relevant photographic subject for each theme — evocative and safe,
+   never a literal grim term. real photos sit on top of the generated art. */
+const PHOTO_TERM = {
+  music:"concert", dance:"dance", war:"storm,clouds", love:"sunset", flora:"flowers",
+  tree:"forest", bird:"birds", fire:"bonfire", water:"ocean,waves", rain:"rain",
+  winter:"snow", sun:"sunrise", night:"starry,night", mountain:"mountains", journey:"open,road",
+  city:"skyline", word:"old,books", drink:"coffee", time:"clouds,sky", abstract:"texture,paper",
+};
+function photoURL(p){
+  const term=PHOTO_TERM[p.theme]||"texture";
+  const lock=hash((p.title||"")+(p.date||""))%99999;          // stable image per piece
+  return `https://loremflickr.com/640/360/${encodeURIComponent(term)}?lock=${lock}`;
+}
+function coverMarkup(p){
+  const art=`<div class="cover__art">${coverSVG(p)}</div>`;     // guaranteed, relevant, offline
+  if(p.img===false) return art;                                 // opt out of photos for this piece
+  const src=p.img || photoURL(p);                               // a real photo matched to the imagery
+  return art+`<img class="cover__photo" loading="lazy" decoding="async" alt="" src="${esc(src)}" onerror="this.remove()">`;
+}
+
+/* ============================================================ normalise */
+function normalize(raw){
+  const p = {...raw};
+  p.year = yearOf(p.date);
+  if(p.type === "haiku"){
+    p.words = p.words || [];
+    p.lines = p.lines || [];
+    p.displayTitle = p.words.join(" / ");
+    p.text = p.lines.join("\n");
+  } else {
+    p.displayTitle = p.title || "untitled";
+    p.text = p.body || "";
+  }
+  p.theme = pickTheme(((p.displayTitle||"")+" "+(p.text||"")+" "+(p.labels||[]).join(" ")).toLowerCase());
+  p.search = ((p.displayTitle||"")+"\n"+(p.text||"")).toLowerCase();
+  return p;
+}
+
+/* ============================================================ feed parse */
+function htmlToText(html){
+  const d=document.createElement("div");
+  d.innerHTML=String(html).replace(/<br\s*\/?>/gi,"\n").replace(/<\/(p|div|li|h[1-6])>/gi,"\n");
+  return (d.textContent||"").replace(/\u00a0/g," ");
+}
+const isHaikuTitle = t => (String(t).match(/\//g)||[]).length>=2;
+function haikuWordsFromTitle(t){
+  let parts=String(t).split("/").map(s=>s.trim()).filter(Boolean);
+  if(parts.length){const last=parts[parts.length-1];if(/^[A-Za-z]{3,9}\.?\s*\d{1,2}$/.test(last)||/^\d{1,2}[/.\-]\d/.test(last))parts.pop();}
+  return parts;
+}
+function parseEntry(e){
+  const rawTitle=((e.title&&e.title.$t)||"").trim();
+  const date=((e.published&&e.published.$t)||"").slice(0,10);
+  const linkObj=((e.link||[]).find(l=>l.rel==="alternate"))||{};
+  const url=linkObj.href||"";
+  const labels=(e.category||[]).map(c=>c.term);
+  const text=htmlToText((e.content&&e.content.$t)||(e.summary&&e.summary.$t)||"");
+  const pairs=[...text.matchAll(/#([A-Za-z]\w+)\s*\(([^)]+)\)/g)].map(m=>({src:"#"+m[1],word:m[2].trim()}));
+  const haiku = /#haiku|#thaiku|#senryu|#micropoetry|#tpoem/i.test(text) || isHaikuTitle(rawTitle);
+  let lines=text.split("\n").map(s=>s.trim()).filter(Boolean)
+    .filter(l=>!/^#/.test(l))
+    .filter(l=>!/^https?:\/\//i.test(l))
+    .filter(l=>!/^[\w.-]*(wordpress|blogspot)\.com\/?$/i.test(l))
+    .filter(l=>!/^posted by/i.test(l))
+    .filter(l=>!/^\s*[‹›«»]\s*$/.test(l));
+  const norm=s=>s.replace(/\s+/g," ").replace(/[*_]/g,"").trim().toLowerCase();
+  if(lines.length && rawTitle && norm(lines[0])===norm(rawTitle)) lines.shift();
+
+  if(haiku){
+    const words = pairs.length ? pairs.map(p=>p.word) : haikuWordsFromTitle(rawTitle);
+    return {url,date,type:"haiku",words,sources:pairs.map(p=>p.src),lines,labels};
+  }
+  let title=rawTitle;
+  if(!title && lines.length){ title=lines[0]; lines=lines.slice(1); }
+  const body=lines.join("\n");
+  const type = body.length>240 ? "prose" : "verse";
+  return {url,date,type:type||"verse",title:title||"untitled",body,labels};
+}
+
+/* ============================================================ state */
+const state = { all:[], view:[], query:"", order:"new", form:"all", shown:BATCH, live:false };
+
+/* ============================================================ feed loading (JSONP — works cross-origin) */
+function jsonp(url,timeout=14000){
+  return new Promise((resolve,reject)=>{
+    const cb="bk_"+Date.now()+"_"+Math.floor(Math.random()*1e6);
+    const s=document.createElement("script");
+    let done=false;
+    window[cb]=d=>{done=true;cleanup();resolve(d);};
+    function cleanup(){try{delete window[cb];}catch(e){window[cb]=undefined;}s.remove();clearTimeout(tm);}
+    const tm=setTimeout(()=>{if(!done){cleanup();reject(new Error("timeout"));}},timeout);
+    s.onerror=()=>{cleanup();reject(new Error("script error"));};
+    s.src=url+(url.indexOf("?")>=0?"&":"?")+"callback="+cb;
+    document.body.appendChild(s);
+  });
+}
+async function loadArchive(){
+  const base=`https://${BLOG}/feeds/posts/default?alt=json-in-script&max-results=${PAGE}`;
+  let start=1,total=Infinity,guard=0;
+  const collected=new Map();
+  setStatus("gathering the baithak…");
+  try{
+    while(start<=total && guard<45){
+      const data=await jsonp(`${base}&start-index=${start}`);
+      const f=data.feed;
+      total=parseInt(f.openSearch$totalResults&&f.openSearch$totalResults.$t,10)||0;
+      const entries=f.entry||[];
+      if(!entries.length) break;
+      for(const e of entries){ const p=normalize(parseEntry(e)); if(p.url) collected.set(p.url,p); }
+      state.all=[...collected.values()];
+      buildFilters(); render();
+      setStatus(`gathering… ${Math.min(collected.size,total||collected.size)}${total?(" / "+total):""}`);
+      start+=PAGE; guard++;
+    }
+    state.live=true;
+    setStatus("");
+    buildFilters(); render();
+  }catch(err){
+    // keep the embedded fallback; quietly note the live archive is unavailable here
+    setStatus("");
+    if(!state.live && state.all.length<=FALLBACK.length){
+      $("#count").title="Live archive couldn't load in this environment; showing the embedded selection.";
+    }
+  }
+}
+function setStatus(t){ $("#status").textContent=t; }
+
+/* ============================================================ filters */
+const filtersEl=$("#filters");
+function buildFilters(){
+  const counts={all:state.all.length};
+  state.all.forEach(p=>counts[p.type]=(counts[p.type]||0)+1);
+  const order=["all",...Object.keys(FORM_LABEL).filter(t=>counts[t])];
+  filtersEl.innerHTML=order.map(t=>{
+    const label=t==="all"?"All":FORM_LABEL[t];
+    return `<button class="chip" data-form="${t}" aria-pressed="${t===state.form}">${label}<span class="n">${counts[t]||0}</span></button>`;
+  }).join("");
+  filtersEl.querySelectorAll(".chip").forEach(b=>b.addEventListener("click",()=>setForm(b.dataset.form)));
+}
+function setForm(f){ state.form=f; state.shown=BATCH;
+  filtersEl.querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed",c.dataset.form===f)); render(); }
+
+/* ============================================================ rendering */
+const grid=$("#grid");
+function computeView(){
+  const q=state.query.trim().toLowerCase();
+  let list=state.all.filter(p=>{
+    if(state.form!=="all" && p.type!==state.form) return false;
+    if(!q) return true;
+    return p.search.indexOf(q)>=0;
+  });
+  list.sort((a,b)=> state.order==="new" ? dateObj(b.date)-dateObj(a.date) : dateObj(a.date)-dateObj(b.date));
+  state.view=list;
+}
+function cardHTML(p,q){
+  const body = p.type==="haiku"
+    ? `<div class="threads">${(p.words||[]).map(w=>`<span class="thread">${highlight(w,q)}</span>`).join("")}</div>
+       <p class="haiku">${(p.lines||[]).map(l=>highlight(l,q)).join("\n")}</p>`
+    : `<h3 class="post__title">${highlight(p.displayTitle,q)}</h3>
+       <p class="excerpt">${highlight(excerpt(p),q)}</p>`;
+  return `<div class="cover">${coverMarkup(p)}<span class="badge">${FORM_LABEL[p.type]||p.type}</span><span class="badge badge--year">${p.year}</span></div>
+    <div class="post__body">${body}
+      <div class="post__meta"><span>${p.date?fmtShort.format(dateObj(p.date)):""}</span>
+        <span class="post__read">Read <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></span>
+      </div></div>`;
+}
+function excerpt(p){const ls=(p.body||"").split("\n").filter(l=>l.trim()!=="");const t=ls.slice(0,4).join("\n");return ls.length>4?t+"\n…":t;}
+let renderedKey="\u0000", renderedCount=0;
+function render(force){
+  if(force===undefined) force=true;
+  computeView();
+  const q=state.query.trim();
+  const key=state.form+"|"+state.order+"|"+q;
+  const isAppend = !force && key===renderedKey && !grid.querySelector(".empty");
+  if(!isAppend){ grid.innerHTML=""; renderedCount=0; }
+
+  if(state.view.length===0){
+    grid.innerHTML=`<div class="empty"><p>Nothing in the room matches <b>“${esc(q)}”</b>${state.form!=="all"?" in "+FORM_LABEL[state.form]:""}.</p><button id="emptyReset">Clear filters</button></div>`;
+    $("#emptyReset").addEventListener("click",resetAll);
+    renderedKey=key; updateCount(); $("#loadMore").hidden=true; return;
+  }
+  const target=Math.min(state.shown,state.view.length);
+  for(let i=isAppend?renderedCount:0; i<target; i++){
+    const p=state.view[i];
+    const card=document.createElement("button");
+    card.className="post anim";
+    card.style.animationDelay=Math.min((i-(isAppend?renderedCount:0))%BATCH*22,300)+"ms";
+    card.setAttribute("data-url",p.url);
+    card.innerHTML=cardHTML(p,q);
+    card.addEventListener("click",()=>openReader(p.url));
+    grid.appendChild(card);
+  }
+  renderedCount=target; renderedKey=key;
+  $("#loadMore").hidden = state.shown>=state.view.length;
+  updateCount();
+}
+function updateCount(){
+  const n=state.view.length, total=state.all.length;
+  const years=state.all.map(p=>+p.year).filter(Boolean);
+  const span=years.length?`${Math.min(...years)}–${Math.max(...years)}`:"";
+  const filtered=state.query.trim()||state.form!=="all";
+  $("#count").innerHTML = filtered ? `<b>${n}</b> of ${total}` : `<b>${total}</b> pieces${span?` &middot; ${span}`:""}`;
+  $("#colophonCount").textContent = total?`${total} pieces${span?", "+span:""}.`:"";
+}
+
+/* ============================================================ reader */
+const reader=$("#reader");
+let readerPos=-1, lastFocused=null;
+function openReader(url){
+  readerPos=state.view.findIndex(p=>p.url===url);
+  if(readerPos<0) return;
+  lastFocused=document.activeElement;
+  fillReader();
+  reader.classList.add("is-open"); reader.setAttribute("aria-hidden","false");
+  document.body.style.overflow="hidden"; $("#rNext").focus();
+}
+function fillReader(){
+  const p=state.view[readerPos];
+  $("#rCover").innerHTML=coverMarkup(p);
+  $("#rEyebrow").innerHTML=`<span>${FORM_LABEL[p.type]||p.type}</span><span class="sep"></span><span>${p.date?fmtLong.format(dateObj(p.date)):""}</span>`;
+  let html="";
+  if(p.type==="haiku"){
+    const ws=p.words||[];
+    html+=`<div class="weave">`+ws.map((w,i)=>`<div class="weave__row"><span class="weave__src">${esc((p.sources&&p.sources[i])||HAIKU_SOURCES[i]||"")}</span><span class="weave__word">${esc(w)}</span></div>`).join("")+`</div>`;
+    html+=`<p class="reader__haiku">${esc((p.lines||[]).join("\n"))}</p>`;
+  }else{
+    html+=`<h2 class="reader__title">${esc(p.displayTitle)}</h2>`;
+    html+=`<p class="reader__prose${p.centered?" is-centered":""}">${esc(p.body||"")}</p>`;
+    if(p.note) html+=`<p class="reader__note">*${esc(p.note)}</p>`;
+  }
+  $("#rContent").innerHTML=html;
+  $("#rOrigin").href=p.url||"#";
+  $("#rPrev").disabled=readerPos<=0;
+  $("#rNext").disabled=readerPos>=state.view.length-1;
+  reader.querySelector(".reader__panel").scrollTop=0;
+}
+function closeReader(){reader.classList.remove("is-open");reader.setAttribute("aria-hidden","true");document.body.style.overflow="";if(lastFocused)lastFocused.focus();}
+function step(d){const n=readerPos+d;if(n<0||n>=state.view.length)return;readerPos=n;
+  if(n>=state.shown){state.shown=Math.min(state.view.length,n+BATCH);render();}
+  fillReader();}
+reader.addEventListener("click",e=>{if(e.target.hasAttribute("data-close"))closeReader();});
+$("#rPrev").addEventListener("click",()=>step(-1));
+$("#rNext").addEventListener("click",()=>step(1));
+document.addEventListener("keydown",e=>{
+  if(!reader.classList.contains("is-open"))return;
+  if(e.key==="Escape")closeReader(); else if(e.key==="ArrowLeft")step(-1); else if(e.key==="ArrowRight")step(1);
+});
+
+/* ============================================================ search + sort */
+const searchInput=$("#search"), searchClear=$("#searchClear");
+function onSearch(){state.query=searchInput.value;state.shown=BATCH;searchClear.classList.toggle("is-on",state.query.length>0);render();}
+function clearSearch(){searchInput.value="";state.query="";state.shown=BATCH;searchClear.classList.remove("is-on");render();searchInput.focus();}
+function resetAll(){searchInput.value="";state.query="";state.form="all";state.shown=BATCH;searchClear.classList.remove("is-on");
+  filtersEl.querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed",c.dataset.form==="all"));render();}
+searchInput.addEventListener("input",onSearch);
+searchClear.addEventListener("click",clearSearch);
+$("#searchJump").addEventListener("click",()=>{searchInput.focus();searchInput.scrollIntoView({block:"center",behavior:"smooth"});});
+function setOrder(o){state.order=o;state.shown=BATCH;$("#sortNew").setAttribute("aria-pressed",o==="new");$("#sortOld").setAttribute("aria-pressed",o==="old");render();}
+$("#sortNew").addEventListener("click",()=>setOrder("new"));
+$("#sortOld").addEventListener("click",()=>setOrder("old"));
+document.addEventListener("keydown",e=>{if(e.key==="/"&&document.activeElement!==searchInput&&!reader.classList.contains("is-open")){e.preventDefault();searchInput.focus();}});
+
+/* ---- load more / infinite scroll ---- */
+$("#loadMore").addEventListener("click",()=>{state.shown+=BATCH;render();});
+const io=new IntersectionObserver(es=>{es.forEach(en=>{if(en.isIntersecting && state.shown<state.view.length){state.shown+=BATCH;render();}});},{rootMargin:"600px"});
+io.observe($("#sentinel"));
+
+/* ============================================================ theme */
+const root=document.documentElement;
+function getStored(k){try{return localStorage.getItem(k);}catch(e){return null;}}
+function setStored(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+(function(){const s=getStored("baithak-theme");if(s==="daylight"||s==="evening")root.setAttribute("data-theme",s);})();
+$("#themeToggle").addEventListener("click",()=>{const n=root.getAttribute("data-theme")==="evening"?"daylight":"evening";root.setAttribute("data-theme",n);setStored("baithak-theme",n);});
+
+/* ============================================================ go */
+state.all=FALLBACK.map(normalize);
+buildFilters(); render();
+loadArchive();
+</script>
+</body>
+</html>
