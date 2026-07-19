@@ -2,12 +2,26 @@
 <html lang="en" data-theme="evening">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1a1310" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#efe6d5" media="(prefers-color-scheme: light)">
+<meta name="color-scheme" content="dark light">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <title>baithak — a literary salon, kept since 2006</title>
 <meta name="description" content="The complete literary baithak of temporal, Toronto — haiku, ghazals, prose poems and verse — kept since 2006. Loaded live from the blog itself.">
 <meta property="og:title" content="baithak">
 <meta property="og:description" content="Haiku, ghazals, prose poems and verse — a literary salon kept since 2006.">
 <meta property="og:type" content="website">
+<meta property="og:locale" content="en_CA">
+<script>
+(function(){
+  try{
+    const stored=localStorage.getItem("baithak-theme");
+    const preferred=window.matchMedia&&window.matchMedia("(prefers-color-scheme: light)").matches?"daylight":"evening";
+    document.documentElement.dataset.theme=(stored==="daylight"||stored==="evening")?stored:preferred;
+  }catch(e){}
+})();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Spectral:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -214,18 +228,81 @@
   .colophon{margin-top:40px; padding-top:20px; border-top:1px solid var(--line-soft); font-family:var(--font-ui); font-size:.78rem;
     color:var(--ink-mute); display:flex; flex-wrap:wrap; gap:6px 16px; justify-content:space-between;}
   @media (max-width:620px){.footer__grid{grid-template-columns:1fr;} .hero{padding-top:68px;} .count{margin-left:0;}}
+
+
+  /* Accessibility, responsive layout and progressive-enhancement refinements */
+  .visually-hidden{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important;}
+  .skip-link{position:fixed;top:10px;left:10px;z-index:1000;padding:10px 14px;border-radius:9px;background:var(--ink);color:var(--bg);font:600 .9rem/1 var(--font-ui);text-decoration:none;transform:translateY(-160%);transition:transform .2s var(--ease);}
+  .skip-link:focus{transform:none;}
+  .iconbtn{width:44px;height:44px;}
+  .toolbar{align-items:flex-end;}
+  .control-block{display:flex;flex-direction:column;gap:5px;}
+  .control-label{font-size:.72rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-mute);}
+  .year-select{height:46px;min-width:132px;padding:0 38px 0 13px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);font:500 .84rem var(--font-ui);cursor:pointer;}
+  .year-select:hover,.year-select:focus{border-color:var(--ember-soft);outline:none;}
+  .select-wrap{position:relative;}
+  .select-wrap::after{content:"";position:absolute;right:14px;top:50%;width:7px;height:7px;border-right:2px solid var(--ink-mute);border-bottom:2px solid var(--ink-mute);transform:translateY(-70%) rotate(45deg);pointer-events:none;}
+  .select-wrap select{appearance:none;width:100%;}
+  .status{min-height:22px;}
+  .status.is-ready{color:var(--ink-mute);}
+  .status.is-ready::before{background:#70a675;box-shadow:none;animation:none;}
+  .status.is-notice{color:var(--ink-mute);}
+  .status.is-notice::before{background:var(--gold);box-shadow:none;animation:none;}
+  .grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));}
+  .post{cursor:default;isolation:isolate;}
+  .post__hit{position:absolute;inset:0;z-index:5;width:100%;height:100%;border:0;border-radius:inherit;background:transparent;cursor:pointer;color:transparent;}
+  .post__hit:focus-visible{outline:3px solid var(--ember);outline-offset:3px;}
+  .post:hover,.post:focus-within{transform:translateY(-4px);border-color:var(--ember-soft);box-shadow:0 1px 0 rgba(255,255,255,.03),0 26px 50px -24px rgba(0,0,0,.85);}
+  .post:hover .cover__photo,.post:hover .cover__art svg,.post:focus-within .cover__photo,.post:focus-within .cover__art svg{transform:scale(1.05);}
+  .post:hover .post__read,.post:focus-within .post__read{opacity:1;transform:none;}
+  .reader__panel{max-height:calc(100dvh - 32px);overscroll-behavior:contain;}
+  .reader__close{width:44px;height:44px;}
+  .reader__navbtn{min-height:44px;}
+  .source-note{font-size:.82rem;color:var(--ink-mute);}
+  .source-note strong{color:var(--ink-soft);}
+  .no-script{position:relative;z-index:2;margin:20px auto;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink-soft);max-width:70ch;}
+  @media (hover:none){.post__read{opacity:1;transform:none;}.post:hover{transform:none;}}
+  @media (max-width:760px){
+    .wrap,.topbar__inner{padding-left:16px;padding-right:16px;}
+    .hero{padding-top:56px;padding-bottom:24px;}
+    .hero__name{font-size:clamp(4rem,24vw,7rem);}
+    .toolbar{gap:10px;}
+    .search{flex-basis:100%;}
+    .control-block{flex:1 1 140px;}
+    .sort{width:100%;}
+    .sort button{flex:1;min-height:38px;}
+    .year-select{width:100%;}
+    .status,.count{width:100%;margin-left:0;white-space:normal;}
+    .filters{flex-wrap:nowrap;overflow-x:auto;padding:2px 1px 8px;scrollbar-width:thin;}
+    .chip{flex:0 0 auto;min-height:42px;}
+    .grid{gap:16px;}
+    .reader{padding:8px;}
+    .reader__panel{max-height:calc(100dvh - 16px);border-radius:16px;}
+    .reader__nav{display:grid;grid-template-columns:1fr 1fr;}
+    .reader__origin{grid-column:1/-1;grid-row:1;text-align:center;padding:8px;}
+    .reader__navbtn{justify-content:center;}
+  }
+  @media (max-width:380px){.hero__practice{letter-spacing:.12em}.post__body{padding:16px}.reader__inner{padding-left:18px;padding-right:18px;}}
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;}}
+  @media (forced-colors:active){.hero__name{-webkit-text-fill-color:CanvasText;background:none}.badge{background:Canvas;color:CanvasText}.post__hit:focus-visible{outline:3px solid Highlight;}}
+
 </style>
 </head>
 <body>
+<a class="skip-link" href="#archive">Skip to the writing archive</a>
+<div id="pageShell">
 
 <header class="topbar">
   <div class="topbar__inner">
     <a class="brand" href="#top">baithak<span class="ember-dot" aria-hidden="true"></span></a>
     <div class="controls">
-      <button class="iconbtn" id="searchJump" aria-label="Jump to search">
+      <button class="iconbtn" id="randomPiece" aria-label="Open a random piece" title="Open a random piece">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"/><path d="M4 20 21 3"/><path d="M21 16v5h-5"/><path d="m15 15 6 6"/><path d="m4 4 5 5"/></svg>
+      </button>
+      <button class="iconbtn" id="searchJump" aria-label="Jump to search" title="Search (/) ">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
       </button>
-      <button class="iconbtn" id="themeToggle" aria-label="Switch between evening and daylight">
+      <button class="iconbtn" id="themeToggle" aria-label="Use daylight theme" title="Change colour theme">
         <svg class="theme-icon-night" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
         <svg class="theme-icon-day" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
       </button>
@@ -250,17 +327,25 @@
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
         </button>
       </div>
-      <div class="sort" role="group" aria-label="Sort order">
-        <button id="sortNew" aria-pressed="true">Newest</button>
-        <button id="sortOld" aria-pressed="false">Oldest</button>
+      <div class="control-block">
+        <span class="control-label" id="sortLabel">Order</span>
+        <div class="sort" role="group" aria-labelledby="sortLabel">
+          <button id="sortNew" aria-pressed="true" aria-controls="grid">Newest</button>
+          <button id="sortOld" aria-pressed="false" aria-controls="grid">Oldest</button>
+        </div>
       </div>
-      <span class="status" id="status" aria-live="polite"></span>
+      <label class="control-block" for="yearFilter">
+        <span class="control-label">Year</span>
+        <span class="select-wrap"><select class="year-select" id="yearFilter" aria-controls="grid"><option value="all">All years</option></select></span>
+      </label>
+      <span class="status" id="status" role="status" aria-live="polite"></span>
       <p class="count" id="count" aria-live="polite"></p>
     </div>
 
     <div class="filters" id="filters" role="group" aria-label="Filter by form"></div>
-    <section class="grid" id="grid" aria-label="Writing"></section>
-    <div class="more"><div id="sentinel"></div><button id="loadMore" hidden>Show more</button></div>
+    <h2 class="visually-hidden" id="archive">Writing archive</h2>
+    <section class="grid" id="grid" aria-labelledby="archive" aria-busy="true"></section>
+    <div class="more"><button id="loadMore" type="button" aria-controls="grid" hidden>Show more</button></div>
   </div>
 
   <footer class="footer">
@@ -269,7 +354,7 @@
         <div>
           <h2>About the baithak</h2>
           <p>A baithak is a room you are invited to sit in &mdash; for music, for talk, for poetry. This one belongs to <strong>temporal</strong>, writing from Toronto since 2006: daily haiku and senryu, transliterated Urdu ghazals, narrative prose poems, and the occasional political verse or &ldquo;poessay.&rdquo;</p>
-          <p>Every piece here is drawn live from the blog itself, so the room is always complete and always current.</p>
+          <p id="sourceNote" class="source-note">The embedded selection appears immediately while the live archive is gathered from the original blog.</p>
         </div>
         <div class="footer__links">
           <h3>Elsewhere</h3>
@@ -282,10 +367,12 @@
     </div>
   </footer>
 </main>
+</div>
 
-<div class="reader" id="reader" role="dialog" aria-modal="true" aria-label="Reader" aria-hidden="true">
+<div class="reader" id="reader" role="dialog" aria-modal="true" aria-labelledby="readerDialogTitle" aria-hidden="true">
   <div class="reader__scrim" data-close></div>
-  <div class="reader__panel" role="document">
+  <div class="reader__panel" role="document" tabindex="-1">
+    <h2 class="visually-hidden" id="readerDialogTitle">Reading</h2>
     <button class="reader__close" data-close aria-label="Close (Esc)">
       <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
     </button>
@@ -301,6 +388,7 @@
     </div>
   </div>
 </div>
+<noscript><p class="no-script">JavaScript is required to search and read the archive here. The original writing remains available on the linked Blogspot site.</p></noscript>
 
 <script>
 /* ============================================================
@@ -313,9 +401,8 @@
    ============================================================ */
 const BLOG = "baithak.blogspot.com";   // change this to point at another Blogger blog
 const PAGE = 150;                       // posts per feed request
-const BATCH = 60;                       // cards rendered per scroll batch
+const BATCH = 36;                       // cards rendered per scroll batch
 
-const HAIKU_SOURCES = ["#haikuchallenge","#BraveWrite","#haikufeels"];
 const FORM_LABEL = { haiku:"haiku", ghazal:"ghazal", prose:"prose poem", verse:"verse" };
 
 /* ---- embedded set: the full recent run (verbatim) + older varied work.
@@ -353,18 +440,20 @@ const FALLBACK = [
   {date:"2026-03-06",type:"haiku",words:["yours","foment","handle"],lines:["foment a crisis","handle with care and caution","yours for gain or loss"],url:B+"2026/03/yours-foment-handle-mar-06.html"},
   {date:"2025-04-22",type:"haiku",words:["warbler","con","intend"],lines:["the marquee display","featured con warbler's image","intend to attract"],url:B+"2025/04/warbler-con-intend-apr-22.html"},
   {date:"2023-06-01",type:"haiku",words:["zariba"],lines:["against viruses","cyber or bacterial","zariba flounders"],url:B+"2023/06/zariba.html"},
-  {date:"2023-03-30",type:"haiku",words:["emollient"],lines:["qawwali music","emollient, soothing","whirling dervishes"],url:"http://baithak.blogspot.com/2023/03/emollient.html"},
+  {date:"2023-03-30",type:"haiku",words:["emollient"],lines:["qawwali music","emollient, soothing","whirling dervishes"],url:"https://baithak.blogspot.com/2023/03/emollient.html"},
   {date:"2018-01-17",type:"ghazal",title:"wujood",body:"beh'r e tazabzoob maiN\nhaiN youN ghota zun\nn'janay kis saharay kay mutlaashi haiN\nb'juz kay wujood se hum munharif haiN",note:"transliterated Urdu",centered:true,url:B+"2018/01/wujood.html"},
-  {date:"2010-10-23",type:"prose",title:"Bajan Claire Collins",body:"bajan claire collins, lithe\nsmiling eyes, pouted lips\nassured, single parent\nin T.O. by way of\nthe st. lawrence gap,\nisland of barbados\nmother of ashley\nnow six and my colleague\n\nashley was cuddly, cute\nwith a short afro and\ninfectious dimpled smile\neveryone loved him\n\nten years later\n\na dark wintry night returning late from work\nwalking towards home saw some dark shadows lurking\naround the corner variety store ahead\nbaggy pants, white joggers, over-sized tops with hoods\ninstinctively i crossed the street and kept walking\npast the store i heard foot steps approaching me\ni ran a mental checklist to ward off trouble\n\n'hello uncle t, how are you?' said ashley\nrelieved i inquired about him and claire",note:"names changed",url:"http://baithak.blogspot.com/2010/10/bajan-claire-collins.html"},
+  {date:"2010-10-23",type:"prose",title:"Bajan Claire Collins",body:"bajan claire collins, lithe\nsmiling eyes, pouted lips\nassured, single parent\nin T.O. by way of\nthe st. lawrence gap,\nisland of barbados\nmother of ashley\nnow six and my colleague\n\nashley was cuddly, cute\nwith a short afro and\ninfectious dimpled smile\neveryone loved him\n\nten years later\n\na dark wintry night returning late from work\nwalking towards home saw some dark shadows lurking\naround the corner variety store ahead\nbaggy pants, white joggers, over-sized tops with hoods\ninstinctively i crossed the street and kept walking\npast the store i heard foot steps approaching me\ni ran a mental checklist to ward off trouble\n\n'hello uncle t, how are you?' said ashley\nrelieved i inquired about him and claire",note:"names changed",url:"https://baithak.blogspot.com/2010/10/bajan-claire-collins.html"},
 ];
 
 /* ============================================================ helpers */
 const $ = (s, c=document) => c.querySelector(s);
-const fmtLong  = new Intl.DateTimeFormat("en-US",{weekday:"long",month:"long",day:"numeric",year:"numeric"});
-const fmtShort = new Intl.DateTimeFormat("en-US",{month:"short",day:"numeric",year:"numeric"});
-const dateObj = iso => new Date(iso + "T12:00:00");
+const fmtLong  = new Intl.DateTimeFormat("en-CA",{weekday:"long",month:"long",day:"numeric",year:"numeric"});
+const fmtShort = new Intl.DateTimeFormat("en-CA",{month:"short",day:"numeric",year:"numeric"});
+const dateObj = iso => { const d=new Date((iso||"")+"T12:00:00"); return Number.isNaN(d.getTime())?new Date(0):d; };
 const yearOf  = iso => (iso||"").slice(0,4);
 const esc = s => String(s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+const escAttr = s => String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","\'":"&#39;"}[c]));
+const fold = s => { try{return String(s).normalize("NFKD").replace(/[\u0300-\u036f]/g,"").toLowerCase();}catch(e){return String(s).toLowerCase();} };
 function hash(str){let h=2166136261;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
 function highlight(text,q){const safe=esc(text);if(!q)return safe;const re=new RegExp("("+q.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+")","ig");return safe.replace(re,"<mark class='hit'>$1</mark>");}
@@ -426,34 +515,22 @@ function coverSVG(p){
   const id="g"+seed.toString(36);
   const W=320,H=180;
   const motif=(MOTIF[t.motif]||MOTIF.rings)(rng,W,H,t.ink);
-  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice" role="img" aria-label="${esc(p.theme)} motif">
+  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
     <defs><linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${t.pal[0]}"/><stop offset="1" stop-color="${t.pal[1]}"/></linearGradient>
     <radialGradient id="${id}v" cx="50%" cy="28%" r="85%"><stop offset="0" stop-color="rgba(255,255,255,.10)"/><stop offset="1" stop-color="rgba(0,0,0,.30)"/></radialGradient></defs>
     <rect width="${W}" height="${H}" fill="url(#${id})"/>${motif}<rect width="${W}" height="${H}" fill="url(#${id}v)"/></svg>`;
 }
-/* a relevant photographic subject for each theme — evocative and safe,
-   never a literal grim term. real photos sit on top of the generated art. */
-const PHOTO_TERM = {
-  music:"concert", dance:"dance", war:"storm,clouds", love:"sunset", flora:"flowers",
-  tree:"forest", bird:"birds", fire:"bonfire", water:"ocean,waves", rain:"rain",
-  winter:"snow", sun:"sunrise", night:"starry,night", mountain:"mountains", journey:"open,road",
-  city:"skyline", word:"old,books", drink:"coffee", time:"clouds,sky", abstract:"texture,paper",
-};
-function photoURL(p){
-  const term=PHOTO_TERM[p.theme]||"texture";
-  const lock=hash((p.title||"")+(p.date||""))%99999;          // stable image per piece
-  return `https://loremflickr.com/640/360/${encodeURIComponent(term)}?lock=${lock}`;
-}
+/* Covers are generated locally. An explicit p.img may still be supplied for a specific piece. */
 function coverMarkup(p){
-  const art=`<div class="cover__art">${coverSVG(p)}</div>`;     // guaranteed, relevant, offline
-  if(p.img===false) return art;                                 // opt out of photos for this piece
-  const src=p.img || photoURL(p);                               // a real photo matched to the imagery
-  return art+`<img class="cover__photo" loading="lazy" decoding="async" alt="" src="${esc(src)}" onerror="this.remove()">`;
+  const art=`<div class="cover__art">${coverSVG(p)}</div>`;
+  if(!p.img) return art;
+  return art+`<img class="cover__photo" loading="lazy" decoding="async" alt="" src="${escAttr(p.img)}" onerror="this.remove()">`;
 }
 
 /* ============================================================ normalise */
 function normalize(raw){
   const p = {...raw};
+  if(p.url) p.url=String(p.url).replace(/^http:\/\//i,"https://");
   p.year = yearOf(p.date);
   if(p.type === "haiku"){
     p.words = p.words || [];
@@ -465,7 +542,7 @@ function normalize(raw){
     p.text = p.body || "";
   }
   p.theme = pickTheme(((p.displayTitle||"")+" "+(p.text||"")+" "+(p.labels||[]).join(" ")).toLowerCase());
-  p.search = ((p.displayTitle||"")+"\n"+(p.text||"")).toLowerCase();
+  p.search = fold((p.displayTitle||"")+"\n"+(p.text||"")+"\n"+(p.labels||[]).join(" "));
   return p;
 }
 
@@ -506,12 +583,15 @@ function parseEntry(e){
   let title=rawTitle;
   if(!title && lines.length){ title=lines[0]; lines=lines.slice(1); }
   const body=lines.join("\n");
-  const type = body.length>240 ? "prose" : "verse";
-  return {url,date,type:type||"verse",title:title||"untitled",body,labels};
+  const descriptor=fold(rawTitle+" "+labels.join(" ")+" "+text);
+  const type = /\bghazal\b|transliterated urdu/.test(descriptor) ? "ghazal" : (body.length>240 ? "prose" : "verse");
+  return {url,date,type,title:title||"untitled",body,labels};
 }
 
 /* ============================================================ state */
-const state = { all:[], view:[], query:"", order:"new", form:"all", shown:BATCH, live:false };
+const state = { all:[], view:[], query:"", order:"new", form:"all", year:"all", shown:BATCH, live:false };
+const fallbackNormalized=FALLBACK.map(normalize);
+function dedupePosts(posts){const m=new Map();for(const p of posts){const key=p.url||`${p.date}|${p.displayTitle}`;if(key&&!m.has(key))m.set(key,p);}return [...m.values()];}
 
 /* ============================================================ feed loading (JSONP — works cross-origin) */
 function jsonp(url,timeout=14000){
@@ -531,32 +611,43 @@ async function loadArchive(){
   const base=`https://${BLOG}/feeds/posts/default?alt=json-in-script&max-results=${PAGE}`;
   let start=1,total=Infinity,guard=0;
   const collected=new Map();
-  setStatus("gathering the baithak…");
+  setStatus("Gathering live archive…","loading");
   try{
     while(start<=total && guard<45){
       const data=await jsonp(`${base}&start-index=${start}`);
-      const f=data.feed;
+      const f=data&&data.feed;
+      if(!f) throw new Error("Invalid feed response");
       total=parseInt(f.openSearch$totalResults&&f.openSearch$totalResults.$t,10)||0;
       const entries=f.entry||[];
       if(!entries.length) break;
-      for(const e of entries){ const p=normalize(parseEntry(e)); if(p.url) collected.set(p.url,p); }
-      state.all=[...collected.values()];
-      buildFilters(); render();
-      setStatus(`gathering… ${Math.min(collected.size,total||collected.size)}${total?(" / "+total):""}`);
-      start+=PAGE; guard++;
+      for(const e of entries){const p=normalize(parseEntry(e));if(p.url)collected.set(p.url,p);}
+      state.all=dedupePosts([...collected.values(),...fallbackNormalized]);
+      buildFilters();buildYears();render();
+      setStatus(`Gathering ${Math.min(collected.size,total||collected.size)}${total?` of ${total}`:""}…`,"loading");
+      start+=PAGE;guard++;
     }
-    state.live=true;
-    setStatus("");
-    buildFilters(); render();
+    if(collected.size){state.all=[...collected.values()];state.live=true;}
+    state.all=dedupePosts(state.all);
+    setStatus(state.live?"Live archive":"Embedded selection",state.live?"ready":"notice");
+    $("#sourceNote").innerHTML=state.live
+      ? `<strong>Live archive connected.</strong> ${state.all.length} pieces were gathered from the original blog.`
+      : `The embedded selection is being shown.`;
+    buildFilters();buildYears();render();
   }catch(err){
-    // keep the embedded fallback; quietly note the live archive is unavailable here
-    setStatus("");
-    if(!state.live && state.all.length<=FALLBACK.length){
-      $("#count").title="Live archive couldn't load in this environment; showing the embedded selection.";
-    }
-  }
+    state.all=dedupePosts(state.all.length?state.all:fallbackNormalized);
+    const partial=collected.size>0;
+    setStatus(partial?"Partial live archive":"Embedded selection","notice");
+    $("#sourceNote").innerHTML=partial
+      ? `<strong>Part of the live archive loaded.</strong> ${collected.size} pieces were gathered before the connection stopped; the embedded selection remains available.`
+      : `<strong>Live archive unavailable.</strong> The embedded selection remains available, and every card links to the original blog.`;
+    buildFilters();buildYears();render();
+  }finally{$("#grid").setAttribute("aria-busy","false");}
 }
-function setStatus(t){ $("#status").textContent=t; }
+function setStatus(t,kind="loading"){
+  const el=$("#status");
+  el.textContent=t;
+  el.className="status"+(t?` is-${kind}`:"");
+}
 
 /* ============================================================ filters */
 const filtersEl=$("#filters");
@@ -572,24 +663,35 @@ function buildFilters(){
 }
 function setForm(f){ state.form=f; state.shown=BATCH;
   filtersEl.querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed",c.dataset.form===f)); render(); }
+const yearFilter=$("#yearFilter");
+function buildYears(){
+  const years=[...new Set(state.all.map(p=>p.year).filter(Boolean))].sort((a,b)=>b.localeCompare(a));
+  const current=state.year;
+  yearFilter.innerHTML=`<option value="all">All years</option>`+years.map(y=>`<option value="${escAttr(y)}">${esc(y)}</option>`).join("");
+  state.year=years.includes(current)?current:"all";
+  yearFilter.value=state.year;
+}
+function setYear(y){state.year=y;state.shown=BATCH;render();}
 
 /* ============================================================ rendering */
 const grid=$("#grid");
 function computeView(){
-  const q=state.query.trim().toLowerCase();
+  const q=fold(state.query.trim());
+  const tokens=q.split(/\s+/).filter(Boolean);
   let list=state.all.filter(p=>{
     if(state.form!=="all" && p.type!==state.form) return false;
-    if(!q) return true;
-    return p.search.indexOf(q)>=0;
+    if(state.year!=="all" && p.year!==state.year) return false;
+    if(!tokens.length) return true;
+    return tokens.every(token=>p.search.includes(token));
   });
   list.sort((a,b)=> state.order==="new" ? dateObj(b.date)-dateObj(a.date) : dateObj(a.date)-dateObj(b.date));
   state.view=list;
 }
-function cardHTML(p,q){
+function cardHTML(p,q,id){
   const body = p.type==="haiku"
-    ? `<div class="threads">${(p.words||[]).map(w=>`<span class="thread">${highlight(w,q)}</span>`).join("")}</div>
+    ? `<h3 class="visually-hidden" id="${id}">${highlight(p.displayTitle||"Untitled haiku",q)}</h3><div class="threads">${(p.words||[]).map(w=>`<span class="thread">${highlight(w,q)}</span>`).join("")}</div>
        <p class="haiku">${(p.lines||[]).map(l=>highlight(l,q)).join("\n")}</p>`
-    : `<h3 class="post__title">${highlight(p.displayTitle,q)}</h3>
+    : `<h3 class="post__title" id="${id}">${highlight(p.displayTitle,q)}</h3>
        <p class="excerpt">${highlight(excerpt(p),q)}</p>`;
   return `<div class="cover">${coverMarkup(p)}<span class="badge">${FORM_LABEL[p.type]||p.type}</span><span class="badge badge--year">${p.year}</span></div>
     <div class="post__body">${body}
@@ -599,39 +701,45 @@ function cardHTML(p,q){
 }
 function excerpt(p){const ls=(p.body||"").split("\n").filter(l=>l.trim()!=="");const t=ls.slice(0,4).join("\n");return ls.length>4?t+"\n…":t;}
 let renderedKey="\u0000", renderedCount=0;
-function render(force){
-  if(force===undefined) force=true;
+function render(append=false){
   computeView();
   const q=state.query.trim();
-  const key=state.form+"|"+state.order+"|"+q;
-  const isAppend = !force && key===renderedKey && !grid.querySelector(".empty");
-  if(!isAppend){ grid.innerHTML=""; renderedCount=0; }
+  const key=state.form+"|"+state.year+"|"+state.order+"|"+q;
+  const target=Math.min(state.shown,state.view.length);
+  const canAppend=append&&key===renderedKey&&renderedCount<target&&!grid.querySelector(".empty");
+  if(!canAppend){grid.innerHTML="";renderedCount=0;}
 
   if(state.view.length===0){
-    grid.innerHTML=`<div class="empty"><p>Nothing in the room matches <b>“${esc(q)}”</b>${state.form!=="all"?" in "+FORM_LABEL[state.form]:""}.</p><button id="emptyReset">Clear filters</button></div>`;
+    const filters=[];
+    if(q)filters.push(`search “${esc(q)}”`);
+    if(state.form!=="all")filters.push(FORM_LABEL[state.form]);
+    if(state.year!=="all")filters.push(state.year);
+    grid.innerHTML=`<div class="empty"><p>Nothing in the room matches ${filters.length?`<b>${filters.join(" · ")}</b>`:"the current filters"}.</p><button id="emptyReset" type="button">Clear filters</button></div>`;
     $("#emptyReset").addEventListener("click",resetAll);
-    renderedKey=key; updateCount(); $("#loadMore").hidden=true; return;
+    renderedKey=key;updateCount();$("#loadMore").hidden=true;return;
   }
-  const target=Math.min(state.shown,state.view.length);
-  for(let i=isAppend?renderedCount:0; i<target; i++){
+  for(let i=canAppend?renderedCount:0;i<target;i++){
     const p=state.view[i];
-    const card=document.createElement("button");
+    const card=document.createElement("article");
+    const titleId=`post-title-${hash((p.url||"")+i).toString(36)}`;
+    const label=`Read ${p.displayTitle||FORM_LABEL[p.type]||"piece"}${p.date?`, ${fmtLong.format(dateObj(p.date))}`:""}`;
     card.className="post anim";
-    card.style.animationDelay=Math.min((i-(isAppend?renderedCount:0))%BATCH*22,300)+"ms";
-    card.setAttribute("data-url",p.url);
-    card.innerHTML=cardHTML(p,q);
-    card.addEventListener("click",()=>openReader(p.url));
+    card.style.animationDelay=Math.min((i-(canAppend?renderedCount:0))%BATCH*18,240)+"ms";
+    card.innerHTML=`<button class="post__hit" type="button" aria-label="${escAttr(label)}"></button>`+cardHTML(p,q,titleId);
+    card.querySelector(".post__hit").addEventListener("click",()=>openReader(p.url));
     grid.appendChild(card);
   }
-  renderedCount=target; renderedKey=key;
-  $("#loadMore").hidden = state.shown>=state.view.length;
+  renderedCount=target;renderedKey=key;
+  const more=$("#loadMore");
+  more.hidden=state.shown>=state.view.length;
+  more.textContent=`Show ${Math.min(BATCH,state.view.length-state.shown)} more`;
   updateCount();
 }
 function updateCount(){
   const n=state.view.length, total=state.all.length;
   const years=state.all.map(p=>+p.year).filter(Boolean);
   const span=years.length?`${Math.min(...years)}–${Math.max(...years)}`:"";
-  const filtered=state.query.trim()||state.form!=="all";
+  const filtered=state.query.trim()||state.form!=="all"||state.year!=="all";
   $("#count").innerHTML = filtered ? `<b>${n}</b> of ${total}` : `<b>${total}</b> pieces${span?` &middot; ${span}`:""}`;
   $("#colophonCount").textContent = total?`${total} pieces${span?", "+span:""}.`:"";
 }
@@ -644,17 +752,20 @@ function openReader(url){
   if(readerPos<0) return;
   lastFocused=document.activeElement;
   fillReader();
-  reader.classList.add("is-open"); reader.setAttribute("aria-hidden","false");
-  document.body.style.overflow="hidden"; $("#rNext").focus();
+  reader.classList.add("is-open");reader.setAttribute("aria-hidden","false");
+  $("#pageShell").inert=true;
+  document.body.style.overflow="hidden";$(".reader__close").focus();
 }
 function fillReader(){
   const p=state.view[readerPos];
+  $("#readerDialogTitle").textContent=`Reading: ${p.displayTitle||FORM_LABEL[p.type]||"piece"}`;
   $("#rCover").innerHTML=coverMarkup(p);
   $("#rEyebrow").innerHTML=`<span>${FORM_LABEL[p.type]||p.type}</span><span class="sep"></span><span>${p.date?fmtLong.format(dateObj(p.date)):""}</span>`;
   let html="";
   if(p.type==="haiku"){
     const ws=p.words||[];
-    html+=`<div class="weave">`+ws.map((w,i)=>`<div class="weave__row"><span class="weave__src">${esc((p.sources&&p.sources[i])||HAIKU_SOURCES[i]||"")}</span><span class="weave__word">${esc(w)}</span></div>`).join("")+`</div>`;
+    const sources=p.sources||[];
+    if(ws.length)html+=`<div class="weave">`+ws.map((w,i)=>sources[i]?`<div class="weave__row"><span class="weave__src">${esc(sources[i])}</span><span class="weave__word">${esc(w)}</span></div>`:`<div class="weave__row"><span class="weave__word">${esc(w)}</span></div>`).join("")+`</div>`;
     html+=`<p class="reader__haiku">${esc((p.lines||[]).join("\n"))}</p>`;
   }else{
     html+=`<h2 class="reader__title">${esc(p.displayTitle)}</h2>`;
@@ -667,7 +778,7 @@ function fillReader(){
   $("#rNext").disabled=readerPos>=state.view.length-1;
   reader.querySelector(".reader__panel").scrollTop=0;
 }
-function closeReader(){reader.classList.remove("is-open");reader.setAttribute("aria-hidden","true");document.body.style.overflow="";if(lastFocused)lastFocused.focus();}
+function closeReader(){reader.classList.remove("is-open");reader.setAttribute("aria-hidden","true");$("#pageShell").inert=false;document.body.style.overflow="";if(lastFocused&&document.contains(lastFocused))lastFocused.focus();}
 function step(d){const n=readerPos+d;if(n<0||n>=state.view.length)return;readerPos=n;
   if(n>=state.shown){state.shown=Math.min(state.view.length,n+BATCH);render();}
   fillReader();}
@@ -676,38 +787,48 @@ $("#rPrev").addEventListener("click",()=>step(-1));
 $("#rNext").addEventListener("click",()=>step(1));
 document.addEventListener("keydown",e=>{
   if(!reader.classList.contains("is-open"))return;
-  if(e.key==="Escape")closeReader(); else if(e.key==="ArrowLeft")step(-1); else if(e.key==="ArrowRight")step(1);
+  if(e.key==="Escape"){e.preventDefault();closeReader();return;}
+  if(e.key==="ArrowLeft"){e.preventDefault();step(-1);return;}
+  if(e.key==="ArrowRight"){e.preventDefault();step(1);return;}
+  if(e.key==="Tab"){
+    const focusable=[...reader.querySelectorAll('button:not(:disabled),a[href],[tabindex]:not([tabindex="-1"])')].filter(el=>!el.hidden);
+    if(!focusable.length)return;
+    const first=focusable[0],last=focusable[focusable.length-1];
+    if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
+    else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
+  }
 });
 
 /* ============================================================ search + sort */
 const searchInput=$("#search"), searchClear=$("#searchClear");
 function onSearch(){state.query=searchInput.value;state.shown=BATCH;searchClear.classList.toggle("is-on",state.query.length>0);render();}
 function clearSearch(){searchInput.value="";state.query="";state.shown=BATCH;searchClear.classList.remove("is-on");render();searchInput.focus();}
-function resetAll(){searchInput.value="";state.query="";state.form="all";state.shown=BATCH;searchClear.classList.remove("is-on");
-  filtersEl.querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed",c.dataset.form==="all"));render();}
+function resetAll(){searchInput.value="";state.query="";state.form="all";state.year="all";state.shown=BATCH;searchClear.classList.remove("is-on");
+  filtersEl.querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed",c.dataset.form==="all"));yearFilter.value="all";render();}
 searchInput.addEventListener("input",onSearch);
 searchClear.addEventListener("click",clearSearch);
-$("#searchJump").addEventListener("click",()=>{searchInput.focus();searchInput.scrollIntoView({block:"center",behavior:"smooth"});});
+yearFilter.addEventListener("change",()=>setYear(yearFilter.value));
+$("#searchJump").addEventListener("click",()=>{searchInput.focus();searchInput.scrollIntoView({block:"center",behavior:window.matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});});
+$("#randomPiece").addEventListener("click",()=>{computeView();const pool=state.view.length?state.view:state.all;if(!pool.length)return;openReader(pool[Math.floor(Math.random()*pool.length)].url);});
 function setOrder(o){state.order=o;state.shown=BATCH;$("#sortNew").setAttribute("aria-pressed",o==="new");$("#sortOld").setAttribute("aria-pressed",o==="old");render();}
 $("#sortNew").addEventListener("click",()=>setOrder("new"));
 $("#sortOld").addEventListener("click",()=>setOrder("old"));
 document.addEventListener("keydown",e=>{if(e.key==="/"&&document.activeElement!==searchInput&&!reader.classList.contains("is-open")){e.preventDefault();searchInput.focus();}});
 
 /* ---- load more / infinite scroll ---- */
-$("#loadMore").addEventListener("click",()=>{state.shown+=BATCH;render();});
-const io=new IntersectionObserver(es=>{es.forEach(en=>{if(en.isIntersecting && state.shown<state.view.length){state.shown+=BATCH;render();}});},{rootMargin:"600px"});
-io.observe($("#sentinel"));
+$("#loadMore").addEventListener("click",()=>{state.shown+=BATCH;render(true);});
 
 /* ============================================================ theme */
 const root=document.documentElement;
 function getStored(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function setStored(k,v){try{localStorage.setItem(k,v);}catch(e){}}
-(function(){const s=getStored("baithak-theme");if(s==="daylight"||s==="evening")root.setAttribute("data-theme",s);})();
-$("#themeToggle").addEventListener("click",()=>{const n=root.getAttribute("data-theme")==="evening"?"daylight":"evening";root.setAttribute("data-theme",n);setStored("baithak-theme",n);});
+function syncThemeControl(){const evening=root.getAttribute("data-theme")==="evening";const b=$("#themeToggle");b.setAttribute("aria-label",evening?"Use daylight theme":"Use evening theme");b.title=evening?"Use daylight theme":"Use evening theme";}
+syncThemeControl();
+$("#themeToggle").addEventListener("click",()=>{const n=root.getAttribute("data-theme")==="evening"?"daylight":"evening";root.setAttribute("data-theme",n);setStored("baithak-theme",n);syncThemeControl();});
 
 /* ============================================================ go */
-state.all=FALLBACK.map(normalize);
-buildFilters(); render();
+state.all=fallbackNormalized;
+buildFilters();buildYears();render();
 loadArchive();
 </script>
 </body>
