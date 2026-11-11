@@ -425,19 +425,42 @@ html[lang="ur"] .year > h2 .ycount{font-family:var(--nastaliq);letter-spacing:0;
   color:var(--ink);
 }
 .card-haiku .haiku[lang="ur"]{font-style:normal}
-.p-open{
-  color:var(--dim);
-  margin:0;
-  position:relative;
-  max-height:9.5em;
-  overflow:hidden;
+.p-day{
+  font-family:var(--ui);
+  font-size:.78rem;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin:2.2rem 0 .1rem;
 }
-.p-open::after{
-  content:"";
-  position:absolute;inset-inline:0;bottom:0;height:3.2em;
-  background:linear-gradient(transparent, var(--card));
+html[lang="ur"] .p-day{font-family:var(--nastaliq);letter-spacing:0;text-transform:none;font-size:1rem}
+.p-body{font-family:var(--serif);font-size:1.3rem;line-height:1.8}
+.p-body p, .p-body div{margin:0 0 .9rem}
+.p-body p:last-child, .p-body div:last-child{margin-bottom:0}
+.p-labels{
+  display:flex;flex-wrap:wrap;gap:.3rem .9rem;
+  margin:1rem 0 0;
+  font-family:var(--ui);font-size:.74rem;letter-spacing:.06em;
+  color:var(--faint);
 }
-.p-more{margin-top:.4rem;padding-inline:0}
+.p-labels button{
+  background:none;border:0;padding:0;cursor:pointer;
+  font:inherit;color:inherit;
+}
+.p-labels button:hover{color:var(--gold-bright)}
+.p-partial{
+  margin:1rem 0 0;padding:.6rem .8rem;
+  border:1px dashed var(--gold);border-radius:8px;
+  font-family:var(--ui);font-size:.8rem;color:var(--dim);
+}
+.p-partial a{color:var(--gold-bright)}
+.loadnote{
+  max-width:46rem;margin:.8rem auto 0;padding:.7rem 1rem;
+  border:1px solid var(--gold);border-radius:10px;
+  font-family:var(--ui);font-size:.85rem;color:var(--dim);
+  display:flex;flex-wrap:wrap;gap:.6rem 1rem;align-items:center;justify-content:space-between;
+}
+.loadnote[hidden]{display:none}
 .p-foot{
   display:flex;align-items:center;gap:1rem;
   margin-top:1.1rem;
@@ -683,6 +706,7 @@ noscript div{padding:2rem;text-align:center;color:var(--ink)}
   </details>
   <div class="status" id="status" role="status" aria-live="polite"></div>
   <div class="progress" id="progress" hidden aria-hidden="true"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="loadnote" id="loadNote" role="status" hidden></div>
 </div>
 
 <main id="main">
@@ -718,9 +742,8 @@ noscript div{padding:2rem;text-align:center;color:var(--ink)}
 var BLOG = "https://baithak.blogspot.com";
 var PAGE_SIZE = 500;
 var WORKERS = 4;
-var RENDER_CAP = 200;
+var RENDER_CAP = 300;
 var TOP_TOPICS = 24;
-var SHORT_LIMIT = 260;
 
 /* ---------- the newest poems, kept inside the page ----------
    They appear instantly, before any network request, and are
@@ -792,6 +815,12 @@ var STRINGS = {
     poems_one: "1 poem",
     show_more: "Show more",
     continue_reading: "Continue reading",
+    note_missing: "Loaded {have} of {expected} poems so far. Some pages of the blog did not arrive.",
+    note_partial: "{n} poems could only be loaded in part. Each one links to the full text on the blog.",
+    note_partial_1: "1 poem could only be loaded in part. It links to the full text on the blog.",
+    note_partial_one: "Only the opening of this poem could be loaded.",
+    note_read_full: "Read the full poem on the blog",
+    note_retry: "Try again",
     read_on: "Read on the blog",
     copy_link: "Copy link to this poem",
     copied: "Link copied.",
@@ -1010,6 +1039,8 @@ var currentQuery = "";
 var currentLabel = "";
 var renderLimit = RENDER_CAP;
 var expandedKeys = {};
+var failedPages = [];
+var snapshotTotal = 0;
 var lastWeave = null;
 
 function $(id){ return document.getElementById(id); }
@@ -1086,6 +1117,68 @@ function seedStarter(){
   });
 }
 
+/* ---------- adding posts (shared by the saved copy and the live feed) ---------- */
+function dateFromIso(s){
+  /* keep the calendar day exactly as the blog shows it, whatever the reader's time zone */
+  var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(s || "");
+  return m ? new Date(+m[1], +m[2] - 1, +m[3], 12, 0, 0) : new Date(s || 0);
+}
+function addPost(url, title, d, labels, html, partial){
+  var key = keyFor(url);
+  var existing = byKey[key];
+  if (existing){
+    if (existing.embedded){
+      labels.forEach(function(L){ labelCounts[L] = (labelCounts[L] || 0) + 1; });
+      existing.title = title;
+      existing.date = d;
+      existing.year = d.getFullYear();
+      existing.html = html;
+      existing.url = url;
+      existing.labels = labels;
+      existing.embedded = false;
+      existing.partial = !!partial;
+      existing.plain = null;
+      existing.norm = null;
+    } else if (existing.partial && !partial){
+      existing.html = html;
+      existing.partial = false;
+      existing.plain = null;
+      existing.norm = null;
+    }
+    return;
+  }
+  labels.forEach(function(L){ labelCounts[L] = (labelCounts[L] || 0) + 1; });
+  var post = {
+    key: key, title: title, date: d, year: d.getFullYear(),
+    html: html, url: url, labels: labels,
+    embedded: false, partial: !!partial, plain: null, norm: null
+  };
+  byKey[key] = post;
+  posts.push(post);
+}
+
+/* ---------- saved copy of every poem (poems.json, refreshed daily by a GitHub Action) ---------- */
+function loadSnapshot(){
+  if (!window.fetch) return Promise.resolve();
+  return fetch("poems.json", { cache: "no-cache" }).then(function(r){
+    return r.ok ? r.json() : null;
+  }).then(function(j){
+    if (!j || !j.posts || !j.posts.length) return;
+    j.posts.forEach(function(e){
+      addPost(e.url, e.title || "(untitled)", dateFromIso(e.published),
+              e.labels || [], e.html || "", e.partial);
+    });
+    snapshotTotal = j.total || j.posts.length;
+    sortPosts();
+    buildYearSelect();
+    buildChips();
+    refreshStats();
+    render();
+    buildIndex();
+    if (loadDone) updateLoadNote();
+  }).catch(function(){});
+}
+
 /* ---------- feed loading (JSONP from the Blogger feed) ---------- */
 function fetchPage(startIndex){
   return new Promise(function(resolve, reject){
@@ -1108,45 +1201,37 @@ function fetchPage(startIndex){
     document.head.appendChild(s);
   });
 }
-function fetchPageRetry(startIndex){
-  return fetchPage(startIndex).catch(function(){ return fetchPage(startIndex); });
+function fetchPageRetry(startIndex, tries){
+  tries = tries || 3;
+  return fetchPage(startIndex).catch(function(err){
+    if (tries <= 1) throw err;
+    return new Promise(function(res){ setTimeout(res, 1500 * (4 - tries)); })
+      .then(function(){ return fetchPageRetry(startIndex, tries - 1); });
+  });
 }
 function parseEntries(feed){
   var entries = (feed && feed.feed && feed.feed.entry) || [];
   entries.forEach(function(e){
     var url = "";
     (e.link || []).forEach(function(l){ if (l.rel === "alternate") url = l.href; });
-    var key = keyFor(url);
     var labels = (e.category || []).map(function(c){ return c.term; }).filter(Boolean);
-    var d = new Date(e.published ? e.published.$t : (e.updated ? e.updated.$t : 0));
-    var html = (e.content && e.content.$t) ? e.content.$t
-             : ((e.summary && e.summary.$t) ? e.summary.$t : "");
+    var d = dateFromIso(e.published ? e.published.$t : (e.updated ? e.updated.$t : ""));
+    var hasFull = !!(e.content && e.content.$t);
+    var html = hasFull ? e.content.$t : ((e.summary && e.summary.$t) ? e.summary.$t : "");
     var title = (e.title && e.title.$t) ? e.title.$t : "(untitled)";
-    var existing = byKey[key];
-    if (existing){
-      if (existing.embedded){
-        labels.forEach(function(L){ labelCounts[L] = (labelCounts[L] || 0) + 1; });
-        existing.title = title;
-        existing.date = d;
-        existing.year = d.getFullYear();
-        existing.html = html;
-        existing.url = url;
-        existing.labels = labels;
-        existing.embedded = false;
-        existing.plain = null;
-        existing.norm = null;
-      }
-      return;
-    }
-    labels.forEach(function(L){ labelCounts[L] = (labelCounts[L] || 0) + 1; });
-    var post = {
-      key: key, title: title, date: d, year: d.getFullYear(),
-      html: html, url: url, labels: labels,
-      embedded: false, plain: null, norm: null
-    };
-    byKey[key] = post;
-    posts.push(post);
+    addPost(url, title, d, labels, html, !hasFull);
   });
+}
+function retryFailedPages(){
+  var todo = failedPages.slice();
+  failedPages = [];
+  return todo.reduce(function(chain, page){
+    return chain.then(function(){
+      return fetchPageRetry(1 + (page - 1) * PAGE_SIZE)
+        .then(function(feed){ parseEntries(feed); })
+        .catch(function(){ failedPages.push(page); });
+    });
+  }, Promise.resolve());
 }
 function loadAll(){
   $("progress").hidden = false;
@@ -1155,6 +1240,7 @@ function loadAll(){
     totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
     parseEntries(first);
     loadedPages = 1;
+    failedPages = [];
     afterChunk();
     var next = 2;
     function worker(){
@@ -1162,19 +1248,23 @@ function loadAll(){
       var page = next++;
       return fetchPageRetry(1 + (page - 1) * PAGE_SIZE)
         .then(function(feed){ parseEntries(feed); })
-        .catch(function(){})
+        .catch(function(){ failedPages.push(page); })
         .then(function(){ loadedPages++; afterChunk(); return worker(); });
     }
     var lanes = [];
     for (var i = 0; i < WORKERS; i++) lanes.push(worker());
-    Promise.all(lanes).then(finishLoad);
+    Promise.all(lanes).then(retryFailedPages).then(finishLoad);
   }).catch(function(){
-    /* stay quiet: the embedded poems carry the page */
     $("progress").hidden = true;
     if (!retried){
       retried = true;
       setTimeout(loadAll, 15000);
-    } else if (!posts.length){
+      return;
+    }
+    /* the live feed is out of reach: the saved copy (if any) carries the page */
+    var haveSaved = posts.some(function(p){ return !p.embedded; });
+    if (haveSaved) { finishLoad(); return; }
+    if (!posts.length){
       var f = document.createElement("p");
       f.className = "fallback";
       f.textContent = t("load_error") + " ";
@@ -1198,6 +1288,40 @@ function finishLoad(){
   refreshStats();
   render();
   buildIndex();
+  updateLoadNote();
+}
+function updateLoadNote(){
+  var el = $("loadNote");
+  var have = 0, partial = 0;
+  posts.forEach(function(p){
+    if (p.embedded) return;
+    have++;
+    if (p.partial) partial++;
+  });
+  var expected = total || snapshotTotal || 0;
+  var missing = expected && have < expected;
+  if (!loadDone || (!missing && !partial)){ el.hidden = true; el.textContent = ""; return; }
+  el.textContent = "";
+  var msg = document.createElement("span");
+  msg.textContent = missing
+    ? t("note_missing", { have: have, expected: expected })
+    : (partial === 1 ? t("note_partial_1") : t("note_partial", { n: partial }));
+  el.appendChild(msg);
+  if (missing){
+    var b = document.createElement("button");
+    b.type = "button";
+    b.className = "btn";
+    b.textContent = t("note_retry");
+    b.addEventListener("click", function(){
+      el.hidden = true;
+      $("progress").hidden = false;
+      loadDone = false;
+      if (total === null){ retried = false; loadAll(); }
+      else retryFailedPages().then(finishLoad);
+    });
+    el.appendChild(b);
+  }
+  el.hidden = false;
 }
 
 /* ---------- search index ---------- */
@@ -1282,6 +1406,23 @@ function pad(n){ return (n < 10 ? "0" : "") + n; }
 function fmtDate(d){
   return d.getDate() + " " + MONTHS[lang][d.getMonth()] + " " + d.getFullYear();
 }
+function fmtLong(d){
+  /* "Thursday, April 2, 2026", the way the blog heads each day */
+  try {
+    return d.toLocaleDateString(lang === "en" ? "en-US" : lang,
+      { weekday: "long", year: "numeric", month: "long", day: "numeric" });
+  } catch(e){ return fmtDate(d); }
+}
+function dayKey(d){ return d.getFullYear() + "-" + d.getMonth() + "-" + d.getDate(); }
+function dayHeading(d){
+  var h = document.createElement("h4");
+  h.className = "p-day";
+  var time = document.createElement("time");
+  time.dateTime = d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+  time.textContent = fmtLong(d);
+  h.appendChild(time);
+  return h;
+}
 function tokensFromQuery(){
   return indexReady ? currentQuery.trim().split(/\s+/).filter(Boolean) : [];
 }
@@ -1354,10 +1495,6 @@ function renderBody(container, p, toks){
 function footFor(p){
   var foot = document.createElement("div");
   foot.className = "p-foot";
-  var time = document.createElement("time");
-  time.dateTime = p.date.getFullYear() + "-" + pad(p.date.getMonth() + 1) + "-" + pad(p.date.getDate());
-  time.textContent = fmtDate(p.date);
-  foot.appendChild(time);
   var out = document.createElement("a");
   out.className = "p-out";
   out.href = p.url || BLOG;
@@ -1382,67 +1519,64 @@ function footFor(p){
   foot.appendChild(copy);
   return foot;
 }
-var threadCycle = 0;
 function makeCard(p, toks){
-  ensurePlain(p);
-  var words = promptWords(p.title);
-  var isShort = p.plain.length <= SHORT_LIMIT;
   var card = document.createElement("article");
   card.dataset.key = p.key;
-  card.className = "card" + ((words && isShort) ? " card-haiku thread-" + (threadCycle++ % 3) : "");
+  card.className = "card";
 
-  if (words && isShort){
-    var pw = document.createElement("div");
-    pw.className = "prompt-words";
-    words.forEach(function(w){
-      var s = document.createElement("span");
-      s.className = "pw";
-      s.appendChild(markify(w, toks));
-      pw.appendChild(s);
-    });
-    card.appendChild(pw);
-  } else {
-    var h3 = document.createElement("h3");
-    h3.className = "p-title";
-    h3.setAttribute("dir", "auto");
-    if (URDU_RE.test(p.title)) h3.setAttribute("lang", "ur");
-    h3.appendChild(markify(p.title, toks));
-    card.appendChild(h3);
-  }
+  /* the title exactly as the blog prints it */
+  var h3 = document.createElement("h3");
+  h3.className = "p-title";
+  h3.setAttribute("dir", "auto");
+  if (URDU_RE.test(p.title)) h3.setAttribute("lang", "ur");
+  h3.appendChild(markify(p.title, toks));
+  card.appendChild(h3);
 
+  /* the whole poem, never an excerpt */
   var body = document.createElement("div");
   body.className = "p-body";
-  if (isShort || expandedKeys[p.key]){
-    renderBody(body, p, toks);
-    card.appendChild(body);
-  } else {
-    var open = document.createElement("p");
-    open.className = "p-open";
-    open.setAttribute("dir", "auto");
-    if (URDU_RE.test(p.plain)) open.setAttribute("lang", "ur");
-    open.appendChild(markify(p.plain.slice(0, 420), toks));
-    card.appendChild(open);
-    var more = document.createElement("button");
-    more.type = "button";
-    more.className = "btn p-more";
-    more.textContent = t("continue_reading");
-    more.addEventListener("click", function(){
-      expandedKeys[p.key] = true;
-      open.remove();
-      more.remove();
-      renderBody(body, p, tokensFromQuery());
-      card.insertBefore(body, card.querySelector(".p-foot"));
+  renderBody(body, p, toks);
+  card.appendChild(body);
+
+  if (p.partial){
+    var warn = document.createElement("p");
+    warn.className = "p-partial";
+    warn.appendChild(document.createTextNode(t("note_partial_one") + " "));
+    var full = document.createElement("a");
+    full.href = p.url || BLOG;
+    full.target = "_blank";
+    full.rel = "noopener";
+    full.textContent = t("note_read_full") + " ↗";
+    warn.appendChild(full);
+    card.appendChild(warn);
+  }
+
+  if (p.labels && p.labels.length){
+    var labs = document.createElement("div");
+    labs.className = "p-labels";
+    p.labels.forEach(function(L){
+      var lb = document.createElement("button");
+      lb.type = "button";
+      lb.textContent = "#" + L;
+      lb.addEventListener("click", function(){ setLabel(L); window.scrollTo({ top: 0 }); });
+      labs.appendChild(lb);
     });
-    card.appendChild(more);
+    card.appendChild(labs);
   }
 
   card.appendChild(footFor(p));
   watch(card);
   return card;
 }
+var autoMore = ("IntersectionObserver" in window)
+  ? new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if (en.isIntersecting){ autoMore.unobserve(en.target); en.target.click(); }
+      });
+    }, { rootMargin: "1500px 0px" })
+  : null;
 function render(){
   archive.innerHTML = "";
-  threadCycle = 0;
   if (!posts.length) return;
   var items = getFiltered();
   refreshResultCount(items.length);
@@ -1457,12 +1591,13 @@ function render(){
   var shown = Math.min(items.length, renderLimit);
   var yearCounts = {};
   items.forEach(function(p){ yearCounts[p.year] = (yearCounts[p.year] || 0) + 1; });
-  var section = null, sectionYear = null;
+  var section = null, sectionYear = null, lastDay = null;
   var frag = document.createDocumentFragment();
   for (var i = 0; i < shown; i++){
     var p = items[i];
     if (p.year !== sectionYear){
       sectionYear = p.year;
+      lastDay = null;
       section = document.createElement("section");
       section.className = "year";
       var h2 = document.createElement("h2");
@@ -1478,6 +1613,11 @@ function render(){
       section.appendChild(rule);
       frag.appendChild(section);
     }
+    var dk = dayKey(p.date);
+    if (dk !== lastDay){
+      lastDay = dk;
+      section.appendChild(dayHeading(p.date));
+    }
     section.appendChild(makeCard(p, toks));
   }
   archive.appendChild(frag);
@@ -1491,6 +1631,7 @@ function render(){
       render();
     });
     archive.appendChild(more);
+    if (autoMore) autoMore.observe(more);
   }
 }
 
@@ -1862,6 +2003,7 @@ applyTheme();
 applyLang();
 buildYearSelect();
 buildIndex();
+loadSnapshot();
 loadAll();
 
 })();
